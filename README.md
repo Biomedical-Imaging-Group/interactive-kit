@@ -45,4 +45,3 @@ import sys
 sys.path.insert(0, PATH)
 from iplabs import IPLabViewer as viewer
 ```
-## Licence
