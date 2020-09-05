@@ -7,51 +7,59 @@ import cv2
 import inspect
 # To get user ID 
 import getpass
-# To hide mpl buttons
-from matplotlib import backend_bases
-backend_bases.NavigationToolbar2.toolitems = (
-        ('Pan', 'Pan axes with left mouse, zoom with right', 'move', 'pan'),
-        (None, None, None, None),
-        ('Zoom', 'Zoom to rectangle', 'zoom_to_rect', 'zoom'),
-        (None, None, None, None),
-        ('Save', 'Save the figure', 'filesave', 'save_figure'),
-      )
 
+# This block is to hide mpl buttons (un)comment to enable or disable buttons
+from matplotlib import backend_bases
+ ## MPL button behaviour for images
+backend_bases.NavigationToolbar2.toolitems = (
+    ('Home', 'Reset original view', 'home', 'home'),
+#     ('Back', 'Back to  previous view', 'back', 'back'),
+#     ('Forward', 'Forward to next view', 'forward', 'forward'),
+    (None, None, None, None),
+    ('Pan', 'Pan axes with left mouse, zoom with right', 'move', 'pan'),
+    ('Zoom', 'Zoom to rectangle', 'zoom_to_rect', 'zoom'),
+#     ('Subplots', 'Configure subplots', 'subplots', 'configure_subplots'),
+    (None, None, None, None),
+    ('Save', 'Save the figure', 'filesave', 'save_figure'),
+)
 # Begin the class 
 class IPLabViewer():
     """
-    The ImageViewer class allows you to quickly interact with an image and visualize its properties. You can easily display a histogram, plot the image with different ranges and in different colormaps, and access the statistics of an image (or a region of it). This changes can be made through a series of widgets, that will be described below.
+    The ImageViewer class allows you to quickly interact with an image and visualize its properties. You can easily change the brightness and contrast of your image, display a histogram , plot the image with different ranges and in different colormaps, perform operations on your image and access the statistics of it image (or a region of it). Plotted on top of the histogram, you will have a line that demonstrates the minimum and maximum values that are being used with respect to the original (the histogram will always show the original). The parameters and widgets are described below.
 
     For its construction, you should call:
 
-    IPLabViewer([list_of_images], **kwargs)
+    IPLabViewer([image1, image2, ...], **kwargs)
+    
+    Where the images are numpy arrays.
     
     The extra arguments are:
     - axis (boolean): Display the axis (units in pixels) of the image. Default is False,
-    - callbacks (list of functions): The callback for your activation button when you want to include extra widgets (see new_widgets),
+    - callbacks (list of functions): The callback for your activation button when you want to include extra widgets (see new_widgets) to perform an operation/transformation on your image. This callback should have as only parameter an img (numpy array), and inside it, get the parameters of your transformation from other widgets, and then call your actual transformation. It should return an image (the result of the transformation),
     - clip_range (list or tuple of int): Indicates the min and max values that will be enforced on all images. Images with values outside this range will be clipped to these values.
-    - cmap (string): A string with the colormap desired for the images (currently accepted are 'gray', 'viridis', 'inferno', 'ocean', 'nipy_spectral', 'copper')
+    - cmap (string): A string with the colormap desired for the images (currently accepted are 'gray', 'viridis', 'inferno', 'ocean', 'nipy_spectral', 'copper', 'spring' and 'magma'). If you request a different one, the viewer will use the default value, 'gray'.
     - colorbar (boolean): Decides whether to set or not the colorbar from the beginning. The colorbar can later be set through the buttons. Default is False
-    - fig_title (string): Title for the figure. The figure holding the histograms will add the string 'Histograms'. Not to be confused with title, which sets the title of every individual image.
-    - hist (boolean): Display the histogram. Default is False.
-    - new_widgets (list of ipywidgets): List of user-defined widgets, where the last one is a button the activates a desired function.
+    - hist (boolean): Display the histogram from the beginning (also displays widgets, has priority over 'widgets'). Default is False.
+    - new_widgets (list of ipywidgets): List of user-defined widgets. This functionality is meant to be used when the user wants to define an operation/transformation on the image, and see the results in real time withour the need to call the viewer again. The first widgets in the list should define the parameters of the operation (sliders, dropdown menus, text, etc.) and the last widget in the list is a button the activates a callback (see callbacks).
     - normalize (boolean): Scale the values of the image to the range [0, 1]. Default is False
-    - pixel_grid (boolean): Plot a grid over each pixel,
+    - pixel_grid (boolean): Plot a grid over each pixel. You should only use this function for very small images,
     - scale_range (list or tuple of int): Indicates the min and max values to which all images will be scaled. Not to be confused with clip_range. 
-    - single_image (boolean): Indicate if only one image at a time will be displayed. If so, 'Next' and 'Prev' buttons will appear to switch between images. Default is False.
-    - subplots (list or tuple of int): If given, the Axes in the Figures (both for images and histograms) will have the given shape. If missing, all will be plotted in one column,
-    - title (list of strings): Titles of each of the images. The titles should be given in the same order as the images, 
+    - subplots (list or tuple of int): If given, the Axes in the Figures (both for images and histograms) will have the given shape. If missing, the default behaviour will be set (one single image at a time)
+    - title (list of strings): Titles of each of the images. The titles should be given in the same order as the images. If missing, the title will  be set to the stringified variable name of the image, 
     - widgets (boolean): Display the widget menu.
     
-    If you don't set the parameter 'widgets' to True, then only the image with a button 'Show Widgets' will be displayed. Clicking this button (equivalent to setting 'widgets = True' during construction) will take you to the widgets menu. In here, you will have the following options:
-    - Range: by clicking on the 'Color Scaling' Button and adjusting the slider,
-    - Show or hide histogram: By clicking on the 'Show Histogram' button,
-    - Show or hide the axes of an image: In the options menu (accesed by clicking 'Options on the main menu'), 
-    - Show or hide a colorbar: In the options menu, 
-    - Change the colormap: Dropdown menu in the options menu, 
-    - Reset original: Reset all properties (colormap, original range, axes, etc.) to the values used when initially constructing the object.
+    If you don't set the parameters 'widgets' or 'hist' to True, then only the image with a button 'Show Widgets' and matplotlib's toolbar will be displayed. In the toolbar you will have three buttons:
     
-    Plotted on top of the histogram, you will have a line that demonstrates the minimum and maximum values that are being used with respect to the original (the histogram will always show the original.)     
+    - Zoom button (square): Click on it and then select a region in your image to zoom to that region. 
+    - Pan button (cross with arrows): Click on it, then click, hold and drag on an image to pan the image.
+    - Save button (disk): Take screenshow of figure and save in png format.
+    
+    Clicking the button 'Show Widgets' (equivalent to setting 'widgets = True' during construction) will take you to the widgets menu. In here, you will have the following widgets:
+    - Brightness & Contrast slider: you can use this slider to adjust the brightness and contrast of grayscale images. When you move it, you will see the black line plotted on top of the histogram automatically update, to show you in which region of the histogram are you,
+    - Show or hide histogram button,
+    - Options button: It will take you to  the options menu, where you will be able to change the colormap, to show or hide the axis of your image, and to show a colorbar 
+    - Reset button: Reset all the parameters to the default (brightness and contrast, colormap, zoom)
+    - Statistics text area: in here you will see the mean, standard deviation, range of values and size of your image. If there are 2 or more images being displayed at the same time, you will get the statistics in a list, where each index is the statistic of the corresponding image. The statistics will update automatically when you do any change to your image.
     """
     
     ## Constructor, only mandatory argument is an image
@@ -99,7 +107,7 @@ class IPLabViewer():
             
         # Create output widget to wrap figure and handle display of images
         self.out_fig = widgets.Output(layout = widgets.Layout(width = '80%')) #(%80 for V layouot)
-        with self.out_fig:
+        with self.out_fig:            
             # Initialize figure and subplots inside just created widget
             self.fig, self.axs = plt.subplots(subplots[0], subplots[1], num = f'Image {fig_num} - SCIPER: {uid}')   
         # Set an appropriate size (in inches) for the figure. These are similar to matplotlib default sizes. Modify them to change image physical size. You can also set them constant, in which case, more images --> smaller images.
@@ -164,7 +172,7 @@ class IPLabViewer():
         self.titles = []   # List of titles        
         self.xlim = []     # List to store the x plotting range of each figure        
         self.ylim = []     # List to store the y plotting range of each figure
-        # Check if titles were given, if not, stringified variable name (see self.retriebe_name at the end of the class)
+        # Check if titles were given, if not, stringified variable name (see self.retrieve_name() at the end of the class)
         title_arg = kwargs.get('title', [])
         if type(title_arg) != list:
             title_arg = [title_arg]
@@ -355,49 +363,17 @@ class IPLabViewer():
         # Output widget to enclose histogram (this one will hold it permanently)
         self.out_hist = widgets.Output(layout = widgets.Layout(width = '100%'))   #(85% for V layout) 
         # Initialize histogram figure. The subplots shape is the same as in the images figure
-        with self.out_hist:
+        with self.out_hist:            
             self.fig_hist, self.axs_hist = plt.subplots(subplots[0], subplots[1], num = f'Histogram {fig_num} - SCIPER: {uid}') 
         self.fig_hist.set_size_inches([subplots[1]*4.7*0.60, subplots[0]*4.5*0.7]) #(V layout: See self.fig)
+        
+#         self.fig_hist.canvas.toolbar_visible = False
         # (uncomment next line to) Set EPFL BIG logo
 #         self.fig_hist.figimage(self.logo,  0.01, 0.01, zorder=3, alpha=1)       
         
         # Ensure that hist axes are iterable in one loop (1D np array)
         self.axs_hist = np.array(self.axs_hist).reshape(-1)
-        # Initialize arrays to hold hist and bins
-#         self.hist = []
-#         self.bins = []
-#         # Iterate through each figure and get its histogram its histogram
-#         count = 0
-#         for i in range(self.number_images):
-#             hist, bins = np.histogram(self.original[count], bins = 50, range = (self.min[count], self.max[count]))
-#             # Append info to our bins and hist attributes
-#             self.bins.append(bins)
-#             self.hist.append(hist)
-#             count += 1
         
-#         # Now, we iterate through the hist_axis's, and show the histogram, according to the use case. 
-#         count = 0    
-#         for i in range(self.number_images):
-#             # The first conditional is equal to the conditional when activating axis for the images
-#             if i == len(self.axs) or i == self.number_images - 1:
-#                 if len(self.axs) < len(self.data):
-#                     break
-#                 else:
-#                     for j in range(i + 1, len(self.axs)):
-#                         self.axs_hist[j].axis('off')
-            
-#             # Display axes, only with the x-axis visible, and with corresponding title
-#             self.axs_hist[i].bar(self.bins[count][:-1], self.hist[count], width = (self.bins[count][1] - self.bins[count][0]) / 1.2)
-#             # Hide only y-axis ticks by default
-# #             self.axs_hist[i].axes.yaxis.set_visible(False)
-#             self.axs_hist[i].set_yticks([])
-#             self.axs_hist[i].set_title(self.titles[count])
-#             self.axs_hist[i].set_ylabel('Count')
-#             self.axs_hist[i].set_xlabel('Bin')
-#             count +=1
-        
-#         plt.tight_layout()
-
         # Get histogram information and plot (see function) 
         self.update_histogram()
     
@@ -438,6 +414,15 @@ class IPLabViewer():
         self.update_stats()
         self.update_view()
         self.update_hist_lines()
+        # Override matplotlib home button
+#         home_func = backend_bases.NavigationToolbar2.home
+
+#         def new_home(self, *args, **kwargs):
+#             home_func(self, *args, **kwargs)
+#             self.reset(change = None)
+            
+#         backend_bases.NavigationToolbar2.home = new_home
+                 
         if self.current_image != None:
             self.change_image(0)
         
@@ -504,6 +489,10 @@ class IPLabViewer():
                 self.xlim[0] = np.array([0 - 0.5, self.image_list[self.current_image].shape[1] - 0.5])
                 self.ylim[0] = np.array([self.image_list[self.current_image].shape[0] - 0.5, 0 - 0.5])
                 break
+                
+            if i == len(self.axs) or i == self.number_images - 1:
+#                 if len(self.axs) < len(self.data):
+                break
             self.im[i] = self.axs[i].imshow(self.data[i], clim = [self.min[i], self.max[i]], cmap = self.dropdown_cmap.value)
             self.xlim[i] = np.array([0 - 0.5, self.image_list[i].shape[1] - 0.5])
             self.ylim[i] = np.array([self.image_list[i].shape[0] - 0.5, 0 - 0.5])
@@ -526,7 +515,7 @@ class IPLabViewer():
         self.update_stats()
         self.update_histogram()
         self.update_hist_lines()
-        
+    
     def showw_button_callback(self, change):   
         # Set widgets on request
         self.set_widgets()
@@ -584,7 +573,7 @@ class IPLabViewer():
                 self.im.append(ax.imshow(self.data[count], cmap = self.dropdown_cmap.value, 
                               clim = (self.slider_clim.value[0]*0.01*(self.max[i] - self.min[i]) + self.min[i], 
                                       self.slider_clim.value[1]*0.01*(self.max[i] - self.min[i]) + self.min[i],)))
-            count += 1
+                count += 1
         # Update statistics and histogram
         self.update_stats()
         self.update_histogram()
@@ -603,21 +592,27 @@ class IPLabViewer():
     def update_hist_lines(self): 
         count = 0
         # Get range
-        xmin = [self.slider_clim.value[0]*0.01]
-        xmax = [self.slider_clim.value[1]*0.01]
+        xmin = self.slider_clim.value[0]*0.01
+        xmax = self.slider_clim.value[1]*0.01
         # Iterate through every axes that holds a histogram
-        for ax in self.axs_hist:
+        for i in range(len(self.axs_hist)):
             # Stop condition (in case subplots = [m, n], where m*n > num_images)
             if count == len(self.data): 
                 break
             # Clear existing lines
-            ax.lines.clear()      
-            # Declare new lines that span all the yrange and the xrange given by the slider. They act on axes 'ax', and figure  'fig_hist'
-            l1 = lines.Line2D([xmin, xmax], [0, 1], transform=ax.transAxes, figure=self.fig_hist, color = 'k')
-            # Make the axes show the lines
-            ax.lines.extend([l1])
+#             ax.lines.clear()      
+#             # Declare new lines that span all the yrange and the xrange given by the slider. They act on axes 'ax', and figure  'fig_hist'
+#             l1 = lines.Line2D([xmin, xmax], [0, 1], transform=ax.transAxes, figure=self.fig_hist, color = 'k')
+#             # Make the axes show the lines
+#             ax.lines.extend([l1])
+            if self.current_image != None:
+                i = self.current_image
+            data = [xmin * (self.max[i] - self.min[i]) +self.min[i], xmax * (self.max[i] - self.min[i]) +self.min[i]]
+            self.lines[count][0].set_xdata(data)
+#             else:
+#                 self.lines[i][0].set_xdata([xmin*self.max[self.current_image]+self.min[self.current_image]*(xmax - xmin), xmax*self.max[self.current_image]])
             count +=1
-        plt.draw()
+#         plt.draw()
                    
     def update_view(self):
         # Note that all the widgets are held by self.out. First we check if widgets are required, and which menu is to be displayed
@@ -653,47 +648,60 @@ class IPLabViewer():
         if self.current_image + change in range(self.number_images):
             # Update attribute self.current_image
             self.current_image += change
+            
+            # Local variable
+            curr_img = self.current_image
             # Start Axes from scratch
             self.axs[0].clear()
+            # Attribute to store lines
+            self.lines = []
             # Keep track of wether there was a colorbar before. If so, plot it later
             add_cb = False
             if len(self.cb) == 1:
                 add_cb = True
                 self.cb[0].remove()
             # Redefine AxesImage (plot image) with the correct clim
-            self.im.append(self.axs[0].imshow(self.data[self.current_image], cmap = self.dropdown_cmap.value, 
-                                              clim = (self.slider_clim.value[0]*0.01*(self.max[self.current_image] -
-                                                      self.min[self.current_image]) + self.min[self.current_image], 
-                                                      self.slider_clim.value[1]*0.01*(self.max[self.current_image] -
-                                                      self.min[self.current_image]) + self.min[self.current_image],)))
+            self.im.append(self.axs[0].imshow(self.data[curr_img], cmap = self.dropdown_cmap.value, 
+                                              clim = (self.slider_clim.value[0]*0.01*(self.max[curr_img] -
+                                                      self.min[curr_img]) + self.min[curr_img], 
+                                                      self.slider_clim.value[1]*0.01*(self.max[curr_img] -
+                                                      self.min[curr_img]) + self.min[curr_img],)))
             # Set correct title
-            self.axs[0].set_title(self.titles[self.current_image])
+            self.axs[0].set_title(self.titles[curr_img])
             # Repeat process for histogram
             self.axs_hist[0].clear()
-            self.axs_hist[0].bar(self.bins[self.current_image][:-1], self.hist[self.current_image], 
-                                 width = (self.bins[self.current_image][1] - self.bins[self.current_image][0]) / 1.2) 
+            self.axs_hist[0].bar(self.bins[curr_img][:-1], self.hist[curr_img], 
+                                 width = (self.bins[curr_img][1] - self.bins[curr_img][0]) / 1.2) 
             # Uncomment if condition to show y-axis
 #             if self.button_show_axis.description == 'Show Axis':
 #             self.axs_hist[0].axes.yaxis.set_visible(False)
             self.axs_hist[0].set_yticks([])
             self.axs_hist[0].set_ylabel('Count')
             self.axs_hist[0].set_xlabel('Bin')
-            self.axs_hist[0].set_title(self.titles[self.current_image])  
-            self.update_hist_lines()
+            self.axs_hist[0].set_title(self.titles[curr_img])  
+            self.axs_hist[0].set_xlim(self.min[curr_img], self.max[curr_img])
+            self.axs_hist[0].set_ylim(0, 1.1*np.amax(self.hist[curr_img]))
+            
+            ### Block to set lines
+            xmin = self.slider_clim.value[0]*0.01
+            xmax = self.slider_clim.value[1]*0.01
+#             self.lines[0][0].set_xdata([xmin*self.max[self.current_image], xmax*self.max[self.current_image]])
+            data = [xmin*(self.max[curr_img]-self.min[curr_img])+self.min[curr_img], xmax*(self.max[curr_img]-self.min[curr_img])+self.min[curr_img]]
+            self.lines.append(self.axs_hist[0].plot(data, self.axs_hist[0].get_ylim(), 'k'))
             # Add colorbar if it existed
             if add_cb:
                 self.set_colorbar(colorbar = True)
             # Get the correct x/ylims, and link new axis to callbacks (for zoom)
-            self.xlim[0] = np.array([0 - 0.5, self.image_list[self.current_image].shape[1] - 0.5])
-            self.ylim[0] = np.array([self.image_list[self.current_image].shape[0] - 0.5, 0 - 0.5])            
+            self.xlim[0] = np.array([0 - 0.5, self.image_list[curr_img].shape[1] - 0.5])
+            self.ylim[0] = np.array([self.image_list[curr_img].shape[0] - 0.5, 0 - 0.5])            
             self.link_axs()
             self.update_stats()
         
         # Manage disabling of buttons (Disable prev if it's the first fig, next if it's the last, else enable both)
-        if self.current_image == self.number_images -1 :
+        if curr_img == self.number_images -1 :
             self.button_next.disabled = True
             self.button_prev.disabled = False
-        elif self.current_image == 0:
+        elif curr_img == 0:
             self.button_prev.disabled = True
             self.button_next.disabled = False
         else:
@@ -715,10 +723,13 @@ class IPLabViewer():
             self.hist.append(hist)
             count += 1
         
+        # Attribute to store the lines 
+        self.lines = []
         # Now, we iterate through the hist_axis's, and show the histogram, according to the use case. 
-        count = 0    
+        count = 0   
         for i in range(self.number_images):
             # The first conditional is equal to the conditional when activating axis for the images
+#             print(i, len(self.axs), self.number_images - 1)
             if i == len(self.axs) or i == self.number_images - 1:
                 if len(self.axs) < len(self.data):
                     break
@@ -730,7 +741,10 @@ class IPLabViewer():
             if self.current_image != None:
                 count = self.current_image
             self.axs_hist[i].clear()
-            self.axs_hist[i].bar(self.bins[count][:-1], self.hist[count], width = (self.bins[count][1] - self.bins[count][0]) / 1.2)
+            self.axs_hist[i].set_xlim(self.min[count], self.max[count])
+            self.axs_hist[i].set_ylim(0, 1.1*np.amax(self.hist[count]))
+            self.axs_hist[i].bar(self.bins[count][:-1], self.hist[count], width = (self.bins[count][1] - self.bins[count][0]) / 1.2)        
+            self.lines.append(self.axs_hist[i].plot(self.axs_hist[i].get_xlim(), self.axs_hist[i].get_ylim(), 'k'))
             # Hide only y-axis ticks by default
 #             self.axs_hist[i].axes.yaxis.set_visible(False)
             self.axs_hist[i].set_yticks([])
@@ -740,7 +754,7 @@ class IPLabViewer():
             count +=1
             
         plt.tight_layout()
-        self.update_hist_lines()
+#         self.update_hist_lines()
             
     # Function that links all existing Axes to the Matplotlib callbacks, to act whenever axis limits change (e.i., when there is a zoom)
     def link_axs(self):
@@ -788,12 +802,12 @@ class IPLabViewer():
     
     def show_histogram(self, hist = False):        
         if hist:
-#             self.out_fig.layout.width = '45%'
+            self.out_fig.layout.width = '45%'
             with self.hist_container:
                 display(self.out_hist) # self.out_hist
         else:
             self.hist_container.clear_output()
-#             self.out_fig.layout.width = '80%'
+            self.out_fig.layout.width = '80%'
 
     
     def set_widgets(self, widgets = True):
