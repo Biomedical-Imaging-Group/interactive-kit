@@ -29,7 +29,7 @@ under the guidance, help, testing and feedback of:
 
 It was supported by EPFLs [Center for Digital Education (CEDE)](https://www.epfl.ch/education/educational-initiatives/cede/), and it belongs to de [Biomedical Imaging Group](http://bigwww.epfl.ch/).
 
-## Installation and Usage
+## Installation and usage
 The easiest way to start using the class is to download the [lib](./source/lib/) directory, place it in the same directory as your notebook, and include the following lines in a cell of your notebook:
 ```python
 %matplotlib widget
