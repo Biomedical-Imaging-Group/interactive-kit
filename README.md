@@ -4,7 +4,7 @@ Interactive image visualization tool for Jupyter notebook based on [matplotlib](
 ## Purpose of the Project
 This project has the goal of simplifying image visualization and manipulation when performing Image Processing tasks (or any kind of task involving image visualization) in Python. Using the **IPLabViewer** class in a Jupyter Notebook, a user with virtually no programming experience, and without experience with *matplotlib*, will be able to display an image and interactively change its characteristics (brightness, contrast, size, zoom), and even to extract information or perform operations on the image, without the need to recall the **IPLabViewer** or to plot again.  
 
-The class is designed to run in Jupyter Notebooks or Jupyter Lab, using *matplotlib*'s dynamic environment (activate with the magic command `%matplotlib widget`). All the functunalities are controlled either through *matplotlib*'s native widgets (zoom and change of figure size) or through additional *ipywidgets'* buttons and sliders. See [requirements.txt]() file for more details on the necessary libraries and its versions.
+The class is designed to run in Jupyter Notebooks or Jupyter Lab, using *matplotlib*'s dynamic environment (activate with the magic command `%matplotlib widget`). All the functionalities are controlled either through *matplotlib*'s native widgets (zoom and change of figure size) or through additional *ipywidgets*' buttons and sliders. See [requirements.txt]() file for more details on the necessary libraries and its versions.
 
 ## Main Features 
 Once called, from the **IPLabViewer** and using both widgets and programmatic commands, a user will be able to:
@@ -13,13 +13,13 @@ Once called, from the **IPLabViewer** and using both widgets and programmatic co
 * Change the brightness and contrast of the images through a slider,
 * Explore the histogram of the image,
 * Choose different colormaps and visualization options (colorbar, axis), 
-* Get statistics -updated automatically when zooming to a region- of the image, 
-* Declare functions that perform operations on an image, and through widgets, see the effect of the function with different parameters and applied on different functions. directly inside the **IPLabViewer** object.
+* Get 1st and 2nd order statistics -updated automatically when zooming into a region- of the image, 
+* Declare functions that perform operations on an image, and through custom widgets, see the effect of the function with different parameters applied on different images, directly inside the **IPLabViewer** object.
 
-Please refer to the [tutorial]() for examples on different use cases, or to our [wiki](https://github.com/Biomedical-Imaging-Group/IPLabImageViewer/wiki/Python-IPLabViewer()-Class) for a complete documentation.  
+Please refer to the [tutorial](./source/IPLabViewer_Tutorial.ipynb) for examples on different use cases, or to our [wiki](https://github.com/Biomedical-Imaging-Group/IPLabImageViewer/wiki/Python-IPLabViewer()-Class) for a complete documentation.  
 
 ## Team 
-The project was developed in the most part by:
+The viewer was developed in the most part by:
 * Alejandro Noguerón Aramburu (alejandro.nogueronaramburu@epfl.ch, [Alejandro-1996](https://github.com/Alejandro-1996))
 
 under the guidance, help, testing and feedback of:
@@ -30,7 +30,7 @@ under the guidance, help, testing and feedback of:
 It was supported by EPFLs [Center for Digital Education (CEDE)](https://www.epfl.ch/education/educational-initiatives/cede/), and it belongs to de [Biomedical Imaging Group](http://bigwww.epfl.ch/).
 
 ## Installation and Usage
-The easiest way to start using the class is to download the [lib]() directory, place it in the same directory as your notebook, and include the following lines in a cell of your notebook:
+The easiest way to start using the class is to download the [lib](./source/lib/) directory, place it in the same directory as your notebook, and include the following lines in a cell of your notebook:
 ```python
 %matplotlib widget
 
