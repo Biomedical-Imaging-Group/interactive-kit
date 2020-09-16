@@ -1,5 +1,6 @@
 # IPLabViewer
-Interactive image visualization tool for Jupyter notebook based on [matplotlib](https://matplotlib.org/) and [ipywidgets](https://ipywidgets.readthedocs.io/en/latest/). 
+
+Interactive image visualization tool for [Jupyter](https://jupyter.org/) Notebook based on [matplotlib](https://matplotlib.org/) and [ipywidgets](https://ipywidgets.readthedocs.io/en/latest/). 
 
 ![](IPLabsJupyter_banner.gif)
 
@@ -51,3 +52,13 @@ import sys
 sys.path.insert(0, PATH)
 from iplabs import IPLabViewer as viewer
 ```
+
+### Members of the EPFL community
+
+If you want to start using IPLabViewer rightaway, without going through the process of installing Python and Jupyter, you can [click here](https://noto.epfl.ch/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2FBiomedical-Imaging-Group%2FIPLabImageViewer&urlpath=tree%2FIPLabImageViewer%2FIPLabViewer_Tutorial.ipynb&branch=master) and start using right away from [Noto](https://www.epfl.ch/education/educational-initiatives/cede/digitaltools/noto/), EPFL's Jupyter centralized platform.
+
+## Contributions
+
+We appreciate contributions, feedback and bug reports from the community:
+* If you encounter any bug, please open an issue and describe. We will try to fix it or give you a workaround as soon as possible. 
+* If you widh to contribute, fork the repository and then open a pull request. 
