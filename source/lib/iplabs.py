@@ -132,7 +132,11 @@ class IPLabViewer():
             # Initialize figure and subplots inside just created widget
             self.fig, self.axs = plt.subplots(subplots[0], subplots[1], num = f'Image {fig_num} - SCIPER: {uid} - Date: ' + date_str)   
         # Set an appropriate size (in inches) for the figure. These are similar to matplotlib default sizes. Modify them to change image physical size. You can also set them constant, in which case, more images --> smaller images.
-        self.fig.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) # (subplots[1]*6.4*0.7, subplots[0]*5.5*0.7 for V layout)
+        if self.current_image != None:
+            self.fig.set_size_inches([subplots[1]*4.7*1.3, subplots[0]*4.5*1.3])
+        else:
+            self.fig.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
+        # (subplots[1]*6.4*0.7, subplots[0]*5.5*0.7 for V layout, (0.84, 0.75) for IP1)
         # Set the EPFL logo at the top left corner
         self.fig.figimage(self.logo,  0.01, 0.01, zorder=3, alpha=1)               
         # Make sure that the axs is iterable in one foor loop (1D numpy array)
@@ -401,13 +405,29 @@ class IPLabViewer():
         # Color scaling menu (includes clim_slider, reset button, stats, and back button)
         self.b_and_c_view_rightb = widgets.VBox([self.slider_clim, self.button_reset, self.button_back, self.stats_text,])
         
-        # Options Menu (includes cmap_dropdown, show_axis, colorbar, and back buttons, and stats)
-        self.options_view_rightb = widgets.VBox([self.dropdown_cmap, self.button_show_axis, self.button_colorbar, self.button_joint_zoom,
-                                                 self.button_back, self.stats_text])
-        # If all images are RGB/RGBA, sidable buttons
+        options_widget_list = [self.dropdown_cmap, self.button_show_axis, self.button_colorbar, self.button_joint_zoom,
+                                                 self.button_back, self.stats_text]
+        
+        # If all images are RGB/RGBA, hide buttons
         if all(c in [3, 4] for c in self.channels):
-            self.options_view_rightb = widgets.VBox([self.button_show_axis, self.button_joint_zoom,
-                                                 self.button_back, self.stats_text])
+            options_widget_list = [self.button_show_axis, self.button_joint_zoom, self.button_back, self.stats_text]
+        
+        # If there is only one image in display, remove button 'Enable joint zoom'
+        if self.current_image != None:
+            options_widget_list.remove(self.button_joint_zoom)
+        
+        self.options_view_rightb = widgets.VBox(options_widget_list)
+        
+#         # Options Menu (includes cmap_dropdown, show_axis, colorbar, and back buttons, and stats)
+#         self.options_view_rightb = widgets.VBox([self.dropdown_cmap, self.button_show_axis, self.button_colorbar, self.button_joint_zoom,
+#                                                  self.button_back, self.stats_text])
+#         # If all images are RGB/RGBA, sidable buttons
+#         if all(c in [3, 4] for c in self.channels):
+#             self.options_view_rightb = widgets.VBox([self.button_show_axis, self.button_joint_zoom,
+#                                                  self.button_back, self.stats_text])
+            
+#         if self.current_image == None:
+#             self.options_view_rightb.remove()
 
         
         # Extra_widgets menu (includes sliders, stats, and back button).
@@ -426,8 +446,11 @@ class IPLabViewer():
         # Initialize histogram figure. The subplots shape is the same as in the images figure
         with self.out_hist:            
             self.fig_hist, self.axs_hist = plt.subplots(subplots[0], subplots[1], num = f'Histogram {fig_num} - SCIPER: {uid}') 
-        self.fig_hist.set_size_inches([subplots[1]*4.7*0.65, subplots[0]*4.5*0.72]) #(V layout: See self.fig)
-        
+#         self.fig_hist.set_size_inches([subplots[1]*4.7*0.65, subplots[0]*4.5*0.72]) #(V layout: See self.fig)
+        if self.current_image != None:
+            self.fig_hist.set_size_inches([subplots[1]*4.7*0.5, subplots[0]*4.5*0.55])
+        else:
+            self.fig_hist.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
 #         self.fig_hist.canvas.toolbar_visible = False
         # (uncomment next line to) Set EPFL BIG logo
 #         self.fig_hist.figimage(self.logo,  0.01, 0.01, zorder=3, alpha=1)       
@@ -557,7 +580,9 @@ class IPLabViewer():
         self.dropdown_cmap.value = self.cmap_orig                     
         # Get images back to the originals (In case any function/ transformation has been applied)
         for i in range(self.number_images):
-            self.data[i] = np.copy(self.original[i])           
+            self.data[i] = np.copy(self.original[i])
+            self.max[i] = np.amax(self.data[i])
+            self.min[i] = np.amin(self.data[i])
         # This for loop replots every image (Redefines the AxesImage in the attribute self.im)
         for i in range(self.number_images):
             # If there is only one image, act on this one (self.current_image) and break loop
@@ -637,6 +662,8 @@ class IPLabViewer():
             self.data[i] = np.copy(self.original[i])
             # Call the function defined by the user on the current image
             self.data[i] = self.usr_defined_callbacks[0](self.data[i])
+            self.max[i] = np.amax(self.data[i])
+            self.min[i] = np.amin(self.data[i])
             
         # Update plot. If condition checks is there is only one image being displayed
         if self.current_image != None:
