@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.lines as lines
 import ipywidgets as widgets
-import cv2
+import cv2 as cv
 # To stringify variables
 import inspect
 # To get user ID 
@@ -113,13 +113,19 @@ class IPLabViewer():
         
         # Default behaviour is to show only one image 
         subplots = [1 ,1]
+        
         # Attribute to keep track of image in display 
         self.current_image = 0
+        # Attribute to keep track on wether we have a comparison
+        self.compare = False
         
         # Check if user requested a specific axis grid (subplopts = [m, n]). If so, modify the variable subplots
         if 'subplots' in kwargs:
             subplots = kwargs.get('subplots')           
             # Attribute that will be use to check if single_image was required, and If so, which image is currently on display
+            self.current_image = None
+            
+        if 'pixel_grid' in kwargs:
             self.current_image = None
 
         if 'column_view' in kwargs:
@@ -297,6 +303,11 @@ class IPLabViewer():
         self.button_reset = widgets.Button(description = 'Reset')
         self.button_reset.on_click(self.reset)
         
+        # If there are only two images with the same shape, declare compare button
+        self.button_compare = widgets.Button(description = 'Compare')
+        self.button_compare.on_click(self.compare_button)
+        # If there are only two images with the same shape, declare compare button
+        
         # Go to Options menu Button
         self.button_options = widgets.Button(description = 'Options')
         self.button_options.on_click(self.options_button)
@@ -319,6 +330,7 @@ class IPLabViewer():
         
         # Buttons to navigate through images. Only activated if the user requested single image display
         if self.current_image != None :
+            
             # Button next image ('\U02190' for right arrow, not supported by python apparently)        
             self.button_next = widgets.Button(description = 'Next', layout = widgets.Layout(width = '80px'))
             self.button_next.on_click(self.next_button_callback)
@@ -339,11 +351,11 @@ class IPLabViewer():
         # Choose a colormap. Try to get the user one, otherwise set to 'gray'
         self.cmap_orig = kwargs.get('cmap', 'gray')
         # If the usermap from the user is not supported, we use it (we have already plotted the image) but set the Dropdown menu to gray 
-        if not(self.cmap_orig in ['gray', 'viridis', 'inferno', 'ocean', 'nipy_spectral', 'copper', 'spring', 'magma']):
+        if not(self.cmap_orig in ['gray', 'viridis', 'inferno', 'ocean', 'nipy_spectral', 'copper', 'spring', 'magma', 'hsv']):
             self.cmap_orig = 'gray'
         # Declare Dropdown menu
         self.dropdown_cmap = widgets.Dropdown(options = ['gray', 'viridis', 'inferno', 'ocean', 
-                                                         'nipy_spectral', 'copper', 'spring', 'magma'], 
+                                                         'nipy_spectral', 'copper', 'spring', 'magma', 'hsv'], 
                                               value = self.cmap_orig, 
                                               disabled = False, 
                                               layout = widgets.Layout(width = '65%'))
@@ -406,7 +418,7 @@ class IPLabViewer():
         self.b_and_c_view_rightb = widgets.VBox([self.slider_clim, self.button_reset, self.button_back, self.stats_text,])
         
         options_widget_list = [self.dropdown_cmap, self.button_show_axis, self.button_colorbar, self.button_joint_zoom,
-                                                 self.button_back, self.stats_text]
+                                 self.button_compare, self.button_back, self.stats_text]
         
         # If all images are RGB/RGBA, hide buttons
         if all(c in [3, 4] for c in self.channels):
@@ -416,6 +428,9 @@ class IPLabViewer():
         if self.current_image != None:
             options_widget_list.remove(self.button_joint_zoom)
         
+        if not(self.number_images == 2 and self.original[0].shape == self.original[1].shape):
+            options_widget_list.remove(self.button_compare)
+            
         self.options_view_rightb = widgets.VBox(options_widget_list)
         
 #         # Options Menu (includes cmap_dropdown, show_axis, colorbar, and back buttons, and stats)
@@ -495,6 +510,9 @@ class IPLabViewer():
             self.set_colorbar()
         if kwargs.get('joint_zoom', False):
             self.joint_zoom_callback()
+            
+        if kwargs.get('compare', False):
+            self.compare_button(change = None)
         # Set view and call functions to arrange statistics, widget menu, and histogram lines
         self.view = 'initial'
         self.update_stats()
@@ -565,6 +583,53 @@ class IPLabViewer():
         self.view = 'options'
         self.update_view()
         
+    def compare_button(self, change):
+        # Ensure that we only have to images
+        if self.number_images != 2:
+            return
+        # Get error array (Red RGB image of appropriate size with normalized difference as transparency)
+        diff = np.abs(self.original[1] - self.original[0])
+        diff = (diff - diff.min()) / (diff.max() - diff.min());
+        self.error = np.dstack((np.ones_like(self.original[0]), np.zeros_like(self.original[0]), np.zeros_like(self.original[0]), diff))
+        
+        self.axs[0].imshow(self.error)
+        try:
+            # Will fail if there is only one self.axs (one image display)
+            self.axs[1].imshow(self.error)
+        except:
+            pass
+        # Update necessary attributes for comparison to work (new image is based on the first one)
+#         self.original.append(self.original[0])
+#         self.data.append(self.data[0])
+#         self.min.append(self.min[0])
+#         self.max.append(self.max[0])
+#         self.dx.append(self.dx[0])
+#         self.dy.append(self.dy[0])
+#         self.bins.append(self.bins[0])
+#         self.hist.append(self.hist[0])
+#         self.channels.append(self.channels[0])
+#         if len(self.titles) == self.number_images:
+#             self.titles.append('Difference Between Images')
+#         self.compare = True
+#         self.number_images += 1
+        
+#         # If only one image in display, its straight forward
+#         if self.current_image != None:
+#             # Go directly to comparison
+#             if self.current_image == 0:
+#                 self.change_image(2)
+#             elif self.current_image == 1:
+#                 self.change_image(1)
+#         else:
+#             # Go directly to comparison
+#             if self.current_image == 0:
+#                 self.change_image(2)
+#             elif self.current_image == 1:
+#                 self.change_image(1)
+        # Create third ax
+        
+        # Show display
+        
     def back_button_callback(self, change):
         self.view = 'initial'
         self.update_view()
@@ -586,6 +651,7 @@ class IPLabViewer():
         # This for loop replots every image (Redefines the AxesImage in the attribute self.im)
         for i in range(self.number_images):
             # If there is only one image, act on this one (self.current_image) and break loop
+#             self.axs[i].clear()
             if self.current_image != None:
                 self.im[0] = self.axs[0].imshow(self.data[self.current_image], 
                                                 clim = [self.min[self.current_image], self.max[self.current_image]],
@@ -594,7 +660,7 @@ class IPLabViewer():
                 self.ylim[0] = np.array([self.image_list[self.current_image].shape[0] - 0.5, 0 - 0.5])
                 break
                 
-            if i == len(self.axs) or i == self.number_images - 1:
+            if i == len(self.axs) or i == self.number_images :
 #                 if len(self.axs) < len(self.data):
                 break
             self.im[i] = self.axs[i].imshow(self.data[i], clim = [self.min[i], self.max[i]], cmap = self.dropdown_cmap.value)
@@ -656,12 +722,26 @@ class IPLabViewer():
         
     # Callback used when user declares an extra widget
     def x_w_callback(self, change):
+        # Accept both lists and np arrays
+        self.usr_defined_callbacks = np.array(self.usr_defined_callbacks)
+        # First, we check wether there is one or several callbacks
+        multi_callback = False
+        if self.usr_defined_callbacks.size > 1:
+            # If more than one callback, we want a callback per image. (look at exception)
+            if self.usr_defined_callbacks.size != len(self.original):
+                raise Exception('Please provide either one callback, or the exact number of callbacks as images. The nth callback\
+                                will be applied to the nth image')
+            multi_callback = True
+            
         # Iterate through all images
         for i in range(self.number_images):
             # Restore image, so to perform operation on original
             self.data[i] = np.copy(self.original[i])
             # Call the function defined by the user on the current image
-            self.data[i] = self.usr_defined_callbacks[0](self.data[i])
+            if multi_callback:
+                self.data[i] = self.usr_defined_callbacks[i](self.data[i])
+            else:
+                self.data[i] = self.usr_defined_callbacks[0](self.data[i])
             self.max[i] = np.amax(self.data[i])
             self.min[i] = np.amin(self.data[i])
             
@@ -674,12 +754,14 @@ class IPLabViewer():
             self.im = []
             count = 0
             # Iterate through every axis
+            i = 0
             for ax in self.axs:
                 #Replot the results of the operation with the proper parameters
-                self.im.append(ax.imshow(self.data[count], cmap = self.dropdown_cmap.value, 
+                self.im.append(ax.imshow(self.data[i], cmap = self.dropdown_cmap.value, 
                               clim = (self.slider_clim.value[0]*0.01*(self.max[i] - self.min[i]) + self.min[i], 
                                       self.slider_clim.value[1]*0.01*(self.max[i] - self.min[i]) + self.min[i],)))
                 count += 1
+                i += 1
         # Update statistics and histogram
         self.update_stats()
         self.update_histogram()
@@ -779,6 +861,8 @@ class IPLabViewer():
                                                       self.min[curr_img]) + self.min[curr_img], 
                                                       self.slider_clim.value[1]*0.01*(self.max[curr_img] -
                                                       self.min[curr_img]) + self.min[curr_img],)))
+#             if self.compare and self.current_image == 2:
+#                 self.axs[0].imshow(self.error)
             # Set correct title
             self.axs[0].set_title(self.titles[curr_img])
             # Repeat process for histogram
@@ -885,7 +969,7 @@ class IPLabViewer():
                 else:
                     # If there is only one value in the image, mpl adjusts automatically but throws warning that we want to hide
                     self.axs_hist[i].set_xlim(self.min[count] - 0.05, self.min[count] + 0.05)
-                self.axs_hist[i].set_ylim(0, 1.1*np.amax(self.hist[count]))
+                self.axs_hist[i].set_ylim(0, 1.1*np.amax(self.hist[count]) + 0.05)
                 self.axs_hist[i].bar(self.bins[count][:-1], self.hist[count], width = (self.bins[count][1] - self.bins[count][0]) / 1.2)
                 self.lines.append(self.axs_hist[i].plot(self.axs_hist[i].get_xlim(), self.axs_hist[i].get_ylim(), 'k', linewidth = '0.3', linestyle = 'dashed'))
                 # Hide only y-axis ticks by default
