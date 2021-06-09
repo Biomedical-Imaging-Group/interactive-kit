@@ -31,7 +31,8 @@ backend_bases.NavigationToolbar2.toolitems = (
 
 # Begin the class 
 class IPLabViewer():
-    """
+    """Class for image visualization and manipulation.
+    
     The ImageViewer class allows you to quickly interact with an image and visualize its properties. You can easily change the brightness and contrast of your image, display a histogram , plot the image with different ranges and in different colormaps, perform operations on your image and access the statistics of it image (or a region of it). Plotted on top of the histogram, you will have a line that demonstrates the minimum and maximum values that are being used with respect to the original (the histogram will always show the original). The parameters and widgets are described below.
 
     For its construction, you should call:
@@ -272,7 +273,9 @@ class IPLabViewer():
 #         self.fig.tight_layout()
 #         self.fig.canvas.font = 'monospace'
             
-        ############ Declare widgets and link to callbacks (Names are self selfexplanatory) ############
+        ################################################################################################
+        ########## Declare menu widgets and link to callbacks (Names are self selfexplanatory) #########
+        ################################################################################################
         
         ################### Sliders ########### Values of the slider is based in percentage of total
         # Change ranges using matplotlib clim value
@@ -507,9 +510,7 @@ class IPLabViewer():
             self.fig_hist.set_size_inches([subplots[1]*4.7*0.5, subplots[0]*4.5*0.55])
         else:
             self.fig_hist.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
-#         self.fig_hist.canvas.toolbar_visible = False
-        # (uncomment next line to) Set EPFL BIG logo
-#         self.fig_hist.figimage(self.logo,  0.01, 0.01, zorder=3, alpha=1)       
+#         self.fig_hist.canvas.toolbar_visible = False       
         
         # Ensure that hist axes are iterable in one loop (1D np array)
         self.axs_hist = np.array(self.axs_hist).reshape(-1)
