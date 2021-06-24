@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.lines as lines
 import ipywidgets as widgets
-import cv2 as cv
 # To stringify variables
 import inspect
 # To get user ID 
