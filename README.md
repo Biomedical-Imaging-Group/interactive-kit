@@ -1,6 +1,6 @@
-# IPLabViewer
+# interactive-kit
 
-Interactive image visualization tool for [Jupyter](https://jupyter.org/) Notebooks based on [matplotlib](https://matplotlib.org/) and [ipywidgets](https://ipywidgets.readthedocs.io/en/latest/). 
+A toolkit for interactive visualization of signal and image processing on [Jupyter](https://jupyter.org/) Notebooks.
 
 ![](IPLabsJupyter_banner.gif)
 
