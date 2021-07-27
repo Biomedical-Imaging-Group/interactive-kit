@@ -1,20 +1,21 @@
-# interactive-kit
+# InteractiveKit
 
 A toolkit for interactive visualization of signal and image processing on [Jupyter](https://jupyter.org/) Notebooks.
 
 ![](IPLabsJupyter_banner.gif)
 
-## Purpose of the project
-This project has the goal of simplifying image visualization and visual feedback in image-processing teaching and learning Jupyter Notebooks. Using the **IPLabViewer** class in a Jupyter Notebook, a user with virtually no programming experience, and without experience with *matplotlib*, will be able to display one or several images and interactively change their characteristics (brightness, contrast, size, zoom). The user will even be able to extract information or perform operations on the image, without the need to recall the **IPLabViewer** or to plot again.  
+InteractiveKit was created to simplify visualization in image and signal processing teaching, learning and research. Using [Jupyter Notebooks](https://jupyter.org/) in combination with InteractiveKit, a user with virtually no programming experience, and without experience with *matplotlib*, will be able to display and manipulate one or several signals and interactively change their characteristics. It is even possible to extract information and perform operations directly on the signal, without the need to re-run the cell or to plot again.  
 
-The class is designed to run in Jupyter Notebooks or Jupyter Lab, using *matplotlib*'s dynamic environment (requires [`ipympl`](https://github.com/matplotlib/ipympl), activate with the magic command `%matplotlib widget`). All the functionalities are controlled either through *matplotlib*'s native widgets (zoom and change of figure size) or through additional *ipywidgets*' buttons and sliders. 
+The class is designed to run in Jupyter Notebooks or Jupyter Lab, using *matplotlib*'s dynamic environment (requires [`ipympl`](https://github.com/matplotlib/ipympl), which can be activated with the magic command `%matplotlib widget`). All the functionalities are controlled either through *matplotlib*'s native widgets (zoom and change of figure size) or through additional *ipywidgets*' buttons and sliders. 
 
-<!---
-See the [requirements.txt]() file for more details on the necessary libraries and its versions.
--->
+## Modules
 
-## Main features 
-Once called, from the **IPLabViewer** and using both widgets and programmatic commands, a user will be able to:
+#### **Image Viewer** (`imviewer`)
+
+Optimized for image visualization and manipulation. See the dedicated [tutorial](https://github.com/Biomedical-Imaging-Group/interactive-kit/tree/master/tutorials/ImageViewer_Tutorial.ipynb) and [wiki](https://github.com/Biomedical-Imaging-Group/interactive-kit/wiki/Image-Viewer).
+
+##### Main features 
+Once called, from the `imviewer` and using both widgets and programmatic commands, a user will be able to:
 
 * Plot several images at the same time, and choose different display options (one image at a time, or a customized grid of images),
 * Change the brightness and contrast of the images through a slider,
@@ -22,9 +23,25 @@ Once called, from the **IPLabViewer** and using both widgets and programmatic co
 * Choose different colormaps and visualization options (colorbar, axis), 
 * Get 1st and 2nd order statistics -updated automatically when zooming into a region- of the image,
 * Calculate and visualize differences between two different images,
-* Declare functions that perform operations on an image, and through custom widgets, see the effect of the function with different parameters applied on different images, directly inside the **IPLabViewer** object. 
+* Declare functions that perform operations on an image, and through custom widgets, see the effect of the function with different parameters applied on different images, directly inside the `imviewer` object. 
 
-Please refer to the [tutorial](./source/IPLabViewer_Tutorial.ipynb) for examples on different use cases, or to our [wiki](https://github.com/Biomedical-Imaging-Group/IPLabImageViewer/wiki/Python-IPLabViewer()-Class) for a complete documentation.  
+
+#### **Signal Viewer** (`sigviewer`) 
+Optimized for 1-dimensional signal  visualization and manipulation. See the dedicated [tutorial](https://github.com/Biomedical-Imaging-Group/interactive-kit/tree/master/tutorials/SignalViewer_Tutorial.ipynb) and [wiki](https://github.com/Biomedical-Imaging-Group/interactive-kit/wiki/Signal-Viewer).
+
+<!-- ### **Decision Boundary Viewer** (`boundviewer`) -->
+## Installation and usage
+First, make sure you have installed Python 3.6 or higher. Then, InteractiveKit can easily be installed through PyPI:
+
+```
+pip install interactive-kit==0.1rc3
+```
+
+To use in a jupyter notebook, you can import the modules in the following way:
+
+```python
+from image_viewer_kit import imviewer, sigviewer
+```
 
 ## Team 
 The viewer was initially developed by:
@@ -37,37 +54,14 @@ under the guidance, help, testing and feedback of:
 
 This project is supported by the EPFL's [Center for Digital Education (CEDE)](https://www.epfl.ch/education/educational-initiatives/cede/), and it belongs to the [Biomedical Imaging Group](http://bigwww.epfl.ch/).
 
-## Installation and usage
-#### With pip
-```
-pip install -i https://test.pypi.org/simple/ image-viewer-kit-TEST==0.4
-```
-#### Use in Jupyter 
-```python
-from image_viewer_kit import viewer
-```
-<!-- The easiest way to start using the class is to download the [lib](./source/lib/) directory, place it in the same directory as your notebook, and include the following lines in a cell of your notebook:
-```python
-%matplotlib widget
 
-from lib.iplabs import IPLabViewer as viewer
-```
 
-If you want to keep the `iplabs.py` file in a separate location, you can import it with the following lines:
-```python
-%matplotlib widget
-
-import sys  
-sys.path.insert(0, PATH)
-from iplabs import IPLabViewer as viewer
-```
- -->
 ### Members of the EPFL community
 
-If you want to start using IPLabViewer rightaway, without going through the process of installing Python and Jupyter, you can [click here](https://noto.epfl.ch/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2FBiomedical-Imaging-Group%2FIPLabImageViewer&urlpath=tree%2FIPLabImageViewer%2FIPLabViewer_Tutorial.ipynb&branch=master) and start using right away from [Noto](https://www.epfl.ch/education/educational-initiatives/cede/digitaltools/noto/), EPFL's Jupyter centralized platform.
+If you want to start using InteractiveKit rightaway, without going through the process of installing Python and Jupyter, you can [click here](https://noto.epfl.ch/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2FBiomedical-Imaging-Group%2FIPLabImageViewer&urlpath=tree%2FIPLabImageViewer%2FIPLabViewer_Tutorial.ipynb&branch=master) and start using right away from [Noto](https://www.epfl.ch/education/educational-initiatives/cede/digitaltools/noto/), EPFL's Jupyter centralized platform.
 
 ## Contributions
 
 We appreciate contributions, feedback and bug reports from the community:
 * If you encounter any bug, please open an issue and describe. We will try to fix it or give you a workaround as soon as possible. 
-* If you widh to contribute, fork the repository and then open a pull request. 
+* If you wish to contribute, fork the repository and then open a pull request. 
