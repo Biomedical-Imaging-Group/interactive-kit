@@ -4,7 +4,7 @@ A toolkit for interactive visualization of signal and image processing on [Jupyt
 
 ![](IPLabsJupyter_banner.gif)
 
-InteractiveKit was created to simplify visualization in image and signal processing teaching, learning and research. Using [Jupyter Notebooks](https://jupyter.org/) in combination with InteractiveKit, a user with virtually no programming experience, and without experience with *matplotlib*, will be able to display and manipulate one or several signals and interactively change their characteristics. It is even possible to extract information and perform operations directly on the signal, without the need to re-run the cell or to plot again.  
+InteractiveKit was created to simplify visualization in image and signal processing teaching, learning and research. Using [Jupyter Notebooks](https://jupyter.org/) in combination with InteractiveKit, a user with virtually no programming experience, and without experience with *matplotlib*, will be able to display and manipulate one or several signals -in the form of *NumPy Arrays*- and interactively change their characteristics. It is even possible to extract information and perform operations directly on the signal, without the need to re-run the cell or to plot again.  
 
 The class is designed to run in Jupyter Notebooks or Jupyter Lab, using *matplotlib*'s dynamic environment (requires [`ipympl`](https://github.com/matplotlib/ipympl), which can be activated with the magic command `%matplotlib widget`). All the functionalities are controlled either through *matplotlib*'s native widgets (zoom and change of figure size) or through additional *ipywidgets*' buttons and sliders. 
 

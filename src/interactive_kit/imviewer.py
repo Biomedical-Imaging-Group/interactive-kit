@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.lines as lines
 import ipywidgets as widgets
+import cv2 as cv
 # To stringify variables
 import inspect
 # To get user ID 
@@ -804,20 +805,45 @@ class ImageViewer():
         difference between the two images will be calculated, and drawn in
         red on top of the images. Works for both single and multiple display modes. 
         '''
-        # Ensure that we only have to images
+        # Ensure that we only have to images (otherwise the button should not be there anyway)
         if self.number_images != 2:
             return
         # Get error array (Red RGB image of appropriate size with normalized difference as transparency)
-        diff = np.abs(self.original[1] - self.original[0])
-        diff = (diff - diff.min()) / (diff.max() - diff.min());
-        self.error = np.dstack((np.ones_like(self.original[0]), np.zeros_like(self.original[0]), np.zeros_like(self.original[0]), diff))
-        
-        self.axs[0].imshow(self.error)
-        try:
-            # Will fail if there is only one self.axs (one image display)
-            self.axs[1].imshow(self.error)
-        except:
-            pass
+        if all(c == 1 for c in self.channels):
+            
+            diff = np.abs(self.original[1] - self.original[0])
+            # Normalize if necessary
+            if (diff.max() - diff.min()) != 0:
+                diff = (diff - diff.min()) / (diff.max() - diff.min());
+            self.error = np.dstack((np.ones_like(self.original[0]), np.zeros_like(self.original[0]), np.zeros_like(self.original[0]), diff))  
+
+        elif all(c == 3 for c in self.channels):
+            diff_r = np.abs(self.original[1][:, :, 0] - self.original[0][:, :, 0])
+            if (diff_r.max() - diff_r.min()) != 0:
+                diff_r = (diff_r - diff_r.min()) / (diff_r.max() - diff_r.min());
+            diff_g = np.abs(self.original[1][:, :, 1] - self.original[0][:, :, 1])
+            if (diff_g.max() - diff_g.min()) != 0:
+                diff_g = (diff_g - diff_g.min()) / (diff_g.max() - diff_g.min());
+            diff_b = np.abs(self.original[1][:, :, 2] - self.original[0][:, :, 2])
+            if (diff_b.max() - diff_b.min()) != 0:
+                diff_b = (diff_b - diff_b.min()) / (diff_b.max() - diff_b.min());
+            self.error = np.dstack((diff_r, diff_g, diff_b))
+            
+        if self.current_image == None:
+            for i in range(self.number_images):     
+                if self.channels[i] in [3, 4]:
+                    ############### In docs, alpha can have same shape as data. In practice, it needs to be 2D
+                    self.axs[i].clear()
+                    self.axs[i].imshow(cv.cvtColor(self.data[i], cv.COLOR_BGR2GRAY), alpha=self.error)
+                else:
+                    self.axs[i].imshow(self.error)
+        else:
+            if self.channels[self.current_image] in [3, 4]:
+                self.axs[0].clear()
+#                     self.axs[0].imshow(cv.cvtColor(self.data[self.current_image], cv.COLOR_BGR2GRAY), alpha=self.error)
+                self.axs[0].imshow(self.error)
+            else:
+                self.axs[0].imshow(self.error)
 
     def back_button_callback(self, change):
         '''Callback of button *Back*, to switch to main menu 
