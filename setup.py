@@ -23,7 +23,7 @@ setuptools.setup(
           'numpy', 
           'matplotlib', 
           'jupyter',
-          'jupyterlab',
+          #'jupyterlab',
           'ipympl', 
           'ipywidgets',
           'opencv-python'

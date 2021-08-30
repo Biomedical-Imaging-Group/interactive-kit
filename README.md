@@ -1,12 +1,12 @@
-# InteractiveKit
+# `interactive-kit`
 
 A toolkit for interactive visualization of signal and image processing on [Jupyter](https://jupyter.org/) Notebooks.
 
 ![](IPLabsJupyter_banner.gif)
 
-InteractiveKit was created to simplify visualization in image and signal processing teaching, learning and research. Using [Jupyter Notebooks](https://jupyter.org/) in combination with InteractiveKit, a user with virtually no programming experience, and without experience with *matplotlib*, will be able to display and manipulate one or several signals -in the form of *NumPy Arrays*- and interactively change their characteristics. It is even possible to extract information and perform operations directly on the signal, without the need to re-run the cell or to plot again.  
+`interactive-kit` was created to simplify visualization in image and signal processing teaching, learning and research. Using [Jupyter](https://jupyter.org/) Notebooks in combination with `interactive-kit` a user with virtually no programming experience, or without any experience with `matplotlib`, will be able to display and manipulate one or several signals or images and interactively explore them. It is even possible to extract information and perform operations directly on the signal or image without the need to re-run the cell or to plot again.  
 
-The class is designed to run in Jupyter Notebooks or Jupyter Lab, using *matplotlib*'s dynamic environment (requires [`ipympl`](https://github.com/matplotlib/ipympl), which can be activated with the magic command `%matplotlib widget`). All the functionalities are controlled either through *matplotlib*'s native widgets (zoom and change of figure size) or through additional *ipywidgets*' buttons and sliders. 
+The class is designed to run in Jupyter Notebooks or Jupyter Lab, using `matplotlib`'s dynamic widget-based environment ([`ipympl`](https://github.com/matplotlib/ipympl)), which needs to be activated with the magic command `%matplotlib widget`. All the functionalities are controlled either through `matplotlib`'s native widgets (zoom, pan, and change of figure size) or through additional `ipywidgets`-based buttons and sliders. 
 
 ## Modules
 
@@ -31,7 +31,7 @@ Optimized for 1-dimensional signal  visualization and manipulation. See the dedi
 
 <!-- ### **Decision Boundary Viewer** (`boundviewer`) -->
 ## Installation and usage
-First, make sure you have installed Python 3.6 or higher. Then, InteractiveKit can easily be installed through PyPI:
+First, make sure you have installed Python 3.6 or higher. Then, `interactive-kit` can easily be installed through PyPI:
 
 ```
 pip install interactive-kit==0.1rc3
@@ -40,25 +40,27 @@ pip install interactive-kit==0.1rc3
 To use in a jupyter notebook, you can import the modules in the following way:
 
 ```python
-from image_viewer_kit import imviewer, sigviewer
+from interactive_kit import imviewer, sigviewer
 ```
 
 ## Team 
-The viewer was initially developed by:
+The viewer was developed at the [EPFL's Biomedical Imaging Group](https://bigwww.epfl.ch/), mainly by
+
 * Alejandro Noguerón Aramburu (alejandro.nogueronaramburu@epfl.ch, [Alejandro-1996](https://github.com/Alejandro-1996))
 
-under the guidance, help, testing and feedback of:
+with contributions from 
+
 * Kay Lächler (kay.lachler@epfl.ch, [TheUser0571](https://github.com/TheUser0571))
 * [Pol del Aguila Pla](https://poldap.github.io), (pol.delaguilapla@epfl.ch, [poldap](https://github.com/poldap))
 * [Daniel Sage ](http://bigwww.epfl.ch/sage/index.html), (daniel.sage@epfl.ch, [dasv74](https://github.com/dasv74))
 
-This project is supported by the EPFL's [Center for Digital Education (CEDE)](https://www.epfl.ch/education/educational-initiatives/cede/), and it belongs to the [Biomedical Imaging Group](http://bigwww.epfl.ch/).
+The development of the viewer was supported by the [Digital Resources for Instruction and Learning (DRIL) Fund](https://www.epfl.ch/education/educational-initiatives/cede/digitaltools/dril/) at EPFL, which supported the projects _IPLAB – Image Processing Laboratories on Noto_ and _FeedbackNow – Automatic grading and formative feedback for image processing laboratories_ by Pol del Aguila Pla and Daniel Sage in the sprint and fall semesters of 2020, respectively. See the video below for more information. 
 
-
+[![Image Processing Labs with Jupyter video on YouTube](http://img.youtube.com/vi/AF18wN37B6Q/0.jpg)](http://www.youtube.com/watch?v=AF18wN37B6Q "Image Processing Labs with Jupyter")
 
 ### Members of the EPFL community
 
-If you want to start using InteractiveKit rightaway, without going through the process of installing Python and Jupyter, you can [click here](https://noto.epfl.ch/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2FBiomedical-Imaging-Group%2FIPLabImageViewer&urlpath=tree%2FIPLabImageViewer%2FIPLabViewer_Tutorial.ipynb&branch=master) and start using right away from [Noto](https://www.epfl.ch/education/educational-initiatives/cede/digitaltools/noto/), EPFL's Jupyter centralized platform.
+If you want to start using `interactive-kit` rightaway, without going through the process of installing Python and Jupyter, you can [click here](https://noto.epfl.ch/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2FBiomedical-Imaging-Group%2FIPLabImageViewer&urlpath=tree%2FIPLabImageViewer%2FIPLabViewer_Tutorial.ipynb&branch=master) and start using right away from [Noto](https://www.epfl.ch/education/educational-initiatives/cede/digitaltools/noto/), EPFL's Jupyter centralized platform.
 
 ## Contributions
 
