@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="interactive-kit",
-    version="0.1rc5",
+    version="0.1",
     author="Alejandro Noguerón",
     author_email="alex.noguerona@gmail.com",
     description="Interactive viewer for signal processing, image processing, and machine learning",
@@ -23,7 +23,6 @@ setuptools.setup(
           'numpy', 
           'matplotlib', 
           'jupyter',
-          #'jupyterlab',
           'ipympl', 
           'ipywidgets',
           'opencv-python'
