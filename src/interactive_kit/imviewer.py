@@ -1481,6 +1481,8 @@ class ImageViewer():
         plt.draw()
             
     def set_colormap(self, colormap = 'gray'):
+        # If the user has called this function programatically, change cmap:
+        self.dropdown_cmap.value = colormap
         # Iterate every AxesImage object in our attribute and set the colormap requested
         for im in self.im:
             im.set_cmap(cmap = colormap)   
