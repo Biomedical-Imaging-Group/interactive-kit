@@ -9,8 +9,9 @@ import matplotlib.pyplot as plt
 from matplotlib import backend_bases
 import numpy as np
 
-# Configure Matplotlib buttons - Uncomment lines to get back to baseline # TODO: Make sure
+# Configure Matplotlib buttons - Uncomment lines to get back to baseline 
 backend_bases.NavigationToolbar2.toolitems = (
+    # Button for original 
     ('Home', 'Reset original view', 'home', 'home'),
     # ('Back', 'Back to  previous view', 'back', 'back'),
     # ('Forward', 'Forward to next view', 'forward', 'forward'),
@@ -21,9 +22,6 @@ backend_bases.NavigationToolbar2.toolitems = (
     (None, None, None, None),
     ('Save', 'Save the figure', 'filesave', 'save_figure'),
 )
-
-# Choose a monospace font # TODO: Check why it was disabled
-# plt.rcParams["font.family"] = "monospace"
 
 # Begin the class 
 class ImageViewer():

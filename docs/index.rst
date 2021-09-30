@@ -18,3 +18,8 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+ .. automodule:: interactive_kit.imageviewer
+   :members:
+.. .. autoclass:: ImageViewer
+   :members:
