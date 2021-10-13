@@ -185,7 +185,7 @@ class ImageViewer():
         """Initialization funcion of ImageViewer.
 
         The only required argument is an image (NumPy array) or a list of images. If the images are not NumPy arrays,
-        a ValueException will be raised. All the rest of the parameters are optional.
+        a TypeError will be raised. All the rest of the parameters are optional.
         
         Parameters
         ----------
@@ -294,7 +294,7 @@ class ImageViewer():
         # If a list is given, check that all objects inside are numpy arrays. Raise exception otherwise.
         elif type(image_list) == list:       
             if not(all(isinstance(img, np.ndarray) for img in image_list)):
-                raise ValueException('Make sure that all your images are numpy arrays. Use the method np.array(object).')
+                raise TypeError('Make sure that all your images are numpy arrays. Use the method np.array(object).')
         # Raise exception otherwise. if object type not numpy array nor list.
         else:
             raise Exception('Please give the first argument as a list of numpy arrays.')
