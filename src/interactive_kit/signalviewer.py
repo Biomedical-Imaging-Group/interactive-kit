@@ -33,7 +33,7 @@ class SignalViewer():
         '''Initialization funcion of SignalViewer. 
 
         The only required argument is a signal (1D NumPy array) or a list of 
-        signals. If the signals are not NumPy arrays, a ValueException will 
+        signals. If the signals are not NumPy arrays, a TypeError will
         be raised. All the rest of the parameters are optional         
         
         Parameters
@@ -129,7 +129,7 @@ class SignalViewer():
         # If a list is given, check that all objects inside are numpy arrays. Raise exception otherwise.
         elif type(signal_list) == list:       
             if not(all(isinstance(sig, np.ndarray) for sig in signal_list)):
-                raise ValueException('Make sure that all your signals are numpy arrays. Use the method np.array(object).')
+                raise TypeError('Make sure that all your signals are numpy arrays. Use the method np.array(object).')
         # Raise exception otherwise. if object type not numpy array nor list.
         else:
             raise Exception('Please give the first argument as a list of numpy arrays.')
