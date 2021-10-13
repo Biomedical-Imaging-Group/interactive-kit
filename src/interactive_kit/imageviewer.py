@@ -313,25 +313,31 @@ class ImageViewer():
         # Attribute to keep track on wether we have a comparison
         self.compare = False
         
+        # Extract pixel grid parameter
+        self.pixel_grid = kwargs.get('pixel_grid', False)
+        
         # Check if user requested a specific axis grid (subplopts = [m, n]). If so, modify the variable subplots
         if 'subplots' in kwargs:
             subplots = kwargs.get('subplots')           
             # Attribute that will be use to check if single_image was required, and If so, which image is currently on display
             self.current_image = None
-            
-        if 'pixel_grid' in kwargs:
+        elif self.pixel_grid:
             self.current_image = None
-            
+        
         # Create output widget to wrap figure and handle display of images
         self.out_fig = widgets.Output(layout = widgets.Layout(width = '80%')) #(%80 for V layouot)
-        with self.out_fig:            
+        with self.out_fig:
             # Initialize figure and subplots inside just created widget
             self.fig, self.axs = plt.subplots(subplots[0], subplots[1], num = f'Image {fig_num} - SCIPER: {uid} - Date: ' + date_str)   
         # Set an appropriate size (in inches) for the figure. These are similar to matplotlib default sizes. Modify them to change image physical size. You can also set them constant, in which case, more images --> smaller images.
         if self.current_image != None:
             self.fig.set_size_inches([subplots[1]*4.7*1.3, subplots[0]*4.5*1.3])
         else:
-            self.fig.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
+            if self.pixel_grid or kwargs.get('axis', False):
+                # Make it higher if the axis is displayed so as not to clip the title
+                self.fig.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.9]) 
+            else:
+                self.fig.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
         # (subplots[1]*6.4*0.7, subplots[0]*5.5*0.7 for V layout, (0.84, 0.75) for IP1)               
         # Make sure that the axs is iterable in one foor loop (1D numpy array)
         self.axs = np.array(self.axs).reshape(-1)
@@ -425,9 +431,7 @@ class ImageViewer():
                         self.axs[j].axis('off')
                     
             # Check if pixel_grid = True. Assign parameter to keep track of user request (will be useful deciding wether to show axis)
-            self.pixel_grid = False
-            if kwargs.get('pixel_grid', False):
-                self.pixel_grid = True
+            if self.pixel_grid:
                 # use 'minor' ticks to visualize the pixels. This ones will mark the lines
                 self.axs[i].grid(which='minor')
                 self.axs[i].set_yticks(np.arange(0.5, self.dx[count]-0.5, step=1), minor=True)
@@ -684,7 +688,10 @@ class ImageViewer():
             self.widgets = False
             display(self.button_showw)
         # Show axis only on request, or if pixel_grid was requested
-        if not(kwargs.get('axis', False) or self.pixel_grid):
+        if (kwargs.get('axis', False) or self.pixel_grid):
+            self.button_show_axis.description = 'Hide Axis'
+            self.set_axis(axis = True)
+        else:
             self.button_show_axis.description = 'Show Axis'
             self.set_axis(axis = False)
         # Show colorbar on request
