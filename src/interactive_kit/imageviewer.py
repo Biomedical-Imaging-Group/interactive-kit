@@ -330,7 +330,7 @@ class ImageViewer:
             # Initialize figure and subplots inside just created widget
             self.fig, self.axs = plt.subplots(subplots[0], subplots[1], num = f'Image {fig_num} - SCIPER: {uid} - Date: ' + date_str)   
         # Set an appropriate size (in inches) for the figure. These are similar to matplotlib default sizes. Modify them to change image physical size. You can also set them constant, in which case, more images --> smaller images.
-        if self.current_image != None:
+        if self.current_image is not None:
             self.fig.set_size_inches([subplots[1]*4.7*1.3, subplots[0]*4.5*1.3])
         else:
             if self.pixel_grid or kwargs.get('axis', False):
@@ -518,7 +518,7 @@ class ImageViewer:
         self.button_showw.on_click(self.showw_button_callback)
         
         # Buttons to navigate through images. Only activated if the user requested single image display
-        if self.current_image != None :
+        if self.current_image is not None:
             
             # Button next image ('\U02190' for right arrow, not supported by python apparently)        
             self.button_next = widgets.Button(description = 'Next', layout = widgets.Layout(width = '80px'))
@@ -603,7 +603,7 @@ class ImageViewer:
         widget_list = [self.b_c_text, self.slider_clim, self.button_hist, self.button_options, self.button_reset, self.stats_text]
         
         # If more than one image, add next and previous buttons
-        if self.current_image != None and self.number_images > 1:
+        if self.current_image is not None and self.number_images > 1:
             widget_list.insert(5, self.next_prev_buttons)
             
         # If extra widgets are given, add extra widgets button
@@ -626,7 +626,7 @@ class ImageViewer:
             options_widget_list = [self.button_show_axis, self.button_joint_zoom, self.button_compare, self.button_back, self.stats_text]
         
         # If there is only one image in display, remove button 'Enable joint zoom'
-        if self.current_image != None:
+        if self.current_image is not None:
             options_widget_list.remove(self.button_joint_zoom)
         
         if not(self.number_images == 2 and self.original[0].shape == self.original[1].shape):
@@ -651,7 +651,7 @@ class ImageViewer:
         with self.out_hist:            
             self.fig_hist, self.axs_hist = plt.subplots(subplots[0], subplots[1], num = f'Histogram {fig_num} - SCIPER: {uid}') 
 #         self.fig_hist.set_size_inches([subplots[1]*4.7*0.65, subplots[0]*4.5*0.72]) #(V layout: See self.fig)
-        if self.current_image != None:
+        if self.current_image is not None:
             self.fig_hist.set_size_inches([subplots[1]*4.7*0.5, subplots[0]*4.5*0.55])
         else:
             self.fig_hist.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
@@ -714,7 +714,7 @@ class ImageViewer:
             
 #         backend_bases.NavigationToolbar2.home = new_home
                  
-        if self.current_image != None:
+        if self.current_image is not None:
             self.change_image(0)
         # Get comparison if necessary
         if kwargs.get('compare', False):
@@ -744,7 +744,7 @@ class ImageViewer:
         # Iterate through each AxesImage and apply new clim
         for im in self.im: 
             # If condition: make sure that if single_image is set, the limits for the correct image are chosen
-            if self.current_image != None:
+            if self.current_image is not None:
                 count = self.current_image
             im.set_clim(change.new[0]*0.01*(self.max[count] - self.min[count]) + self.min[count], 
                         change.new[1]*0.01*(self.max[count] - self.min[count]) + self.min[count])
@@ -822,7 +822,7 @@ class ImageViewer:
                 diff_b = (diff_b - diff_b.min()) / (diff_b.max() - diff_b.min())
             self.error = np.dstack((diff_r, diff_g, diff_b))
             
-        if self.current_image == None:
+        if self.current_image is None:
             for i in range(self.number_images):     
                 if self.channels[i] in [3, 4]:
                     ############### In docs, alpha can have same shape as data. In practice, it needs to be 2D
@@ -892,7 +892,7 @@ class ImageViewer:
         for i in range(self.number_images):
             # If there is only one image, act on this one (self.current_image) and break loop
 #             self.axs[i].clear()
-            if self.current_image != None:
+            if self.current_image is not None:
                 self.im[0] = self.axs[0].imshow(self.data[self.current_image], 
                                                 clim = [self.min[self.current_image], self.max[self.current_image]],
                                                 cmap = self.dropdown_cmap.value)
@@ -1022,7 +1022,7 @@ class ImageViewer:
             self.min[i] = np.amin(self.data[i])
             
         # Update plot. If condition checks is there is only one image being displayed
-        if self.current_image != None:
+        if self.current_image is not None:
             # This function will reset the image
             self.change_image(change = 0)
         else:
@@ -1154,7 +1154,7 @@ class ImageViewer:
 #             l1 = lines.Line2D([xmin, xmax], [0, 1], transform=ax.transAxes, figure=self.fig_hist, color = 'k')
 #             # Make the axes show the lines
 #             ax.lines.extend([l1])
-            if self.current_image != None:
+            if self.current_image is not None:
                 i = self.current_image
             data = [xmin * (self.max[i] - self.min[i]) +self.min[i], xmax * (self.max[i] - self.min[i]) +self.min[i]]
             try:
@@ -1326,7 +1326,7 @@ class ImageViewer:
                         self.axs_hist[j].axis('off')
             
             # Display axes, only with the x-axis visible, and with corresponding title
-            if self.current_image != None:
+            if self.current_image is not None:
                 count = self.current_image
             if self.channels[i] in [3, 4]:
                 self.axs_hist[i].clear()
@@ -1512,11 +1512,11 @@ class ImageViewer:
         ylim = []
         rang = []
         # This conditionals are to check if a specific image is requested by the user
-        if images == None:            
+        if images is None:
             # If no specific image, get all the images given when initializenf the array...
             images = range(len(self.image_list))
             # Unless single_image = True...
-            if self.current_image != None:
+            if self.current_image is not None:
                 # Then just get the info of the image currently in display 
                 images = [self.current_image]
         # Check that if the user requested a specific image, it is in the form of a list
@@ -1529,10 +1529,10 @@ class ImageViewer:
         # Iterate the requested images
         count = 0
         for i in images:
-            if i == len(self.axs) and self.current_image == None:
+            if i == len(self.axs) and self.current_image is None:
                 # In case there are more images than AxesImage objects, stop for loop
                 break
-            if self.current_image == None:
+            if self.current_image is None:
                 xlim.append(list(self.xlim[i]))
                 ylim.append(list(self.ylim[i]))
             else:
@@ -1570,7 +1570,7 @@ class ImageViewer:
         return mean, std, min_value, max_value, shape, xlim, ylim, description
     
     def save(self, change):       
-        if self.current_image != None:
+        if self.current_image is not None:
             viewer_screenshot = np.copy(self.data[self.current_image])
             viewer_screenshot = viewer_screenshot[int(self.ylim[0][1]):int(self.ylim[0][0]), 
                                                   int(self.xlim[0][0]):int(self.xlim[0][1])]

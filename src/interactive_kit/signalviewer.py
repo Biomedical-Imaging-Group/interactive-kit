@@ -166,7 +166,7 @@ class SignalViewer:
             # Initialize figure and subplots inside just created widget
             self.fig, self.axs = plt.subplots(subplots[0], subplots[1], num = f'Signal {fig_num} - SCIPER: {uid} - Date: ' + date_str)   
         # Set an appropriate size (in inches) for the figure. These are similar to matplotlib default sizes. Modify them to change signal physical size. You can also set them constant, in which case, more signals --> smaller signals.
-        if self.current_signal != None:
+        if self.current_signal is not None:
             self.fig.set_size_inches([subplots[1]*4.7*1.3, subplots[0]*4.5*1.3])
         else:
             self.fig.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
@@ -303,7 +303,7 @@ class SignalViewer:
         self.stats_text = widgets.Textarea(value = '', continuous_update = True,
                                            layout = widgets.Layout(width = '170px', height = '220px'), disabled = True) 
         
-        if self.current_signal != None :
+        if self.current_signal is not None:
             
             # Button next image ('\U02190' for right arrow, not supported by python apparently)        
             self.button_next = widgets.Button(description = 'Next', layout = widgets.Layout(width = '80px'))
@@ -326,7 +326,7 @@ class SignalViewer:
         widget_list = [self.button_options, self.button_reset, self.dropdown_style, self.stats_text]
         
         # If more than one image, add next and previous buttons
-        if self.current_signal != None and self.number_signals > 1:
+        if self.current_signal is not None and self.number_signals > 1:
             widget_list.insert(5, self.next_prev_buttons)
         
         self.init_widg_view = widgets.VBox(widget_list)
@@ -373,12 +373,12 @@ class SignalViewer:
         count = 0
         for i in range(self.number_signals):
             # axes_subplot is to choose whether to plot everything on the same AxesSubplot object
-            if self.all_in_one_subplot or self.current_signal != None: 
+            if self.all_in_one_subplot or self.current_signal is not None:
                 axs_idx = 0
-            elif not self.all_in_one_subplot and self.current_signal == None :
+            elif not self.all_in_one_subplot and self.current_signal is None:
                 axs_idx = i
-            if self.current_signal != None and i > 0: break
-            if self.current_signal != None:
+            if self.current_signal is not None and i > 0: break
+            if self.current_signal is not None:
                 count = self.current_signal
 
             if style == 'stem':
