@@ -3,7 +3,7 @@ import getpass  # To get user ids
 import inspect  # To extract variable names
 
 # Related third-party imports (widgets, plots, and arrays)
-import cv2 as cv # TODO: eliminate
+import cv2 as cv  # TODO: eliminate
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 from matplotlib import backend_bases
@@ -24,7 +24,8 @@ backend_bases.NavigationToolbar2.toolitems = (
     ('Save', 'Save the figure', 'filesave', 'save_figure'),
 )
 
-# Begin the class 
+
+# Begin the class
 class ImageViewer:
     """Class for interactive visualization of image processing on Jupyter Notebooks.
 
@@ -180,7 +181,7 @@ class ImageViewer:
     slider_clim : ipywidgets.TextArea
         Displays the statistics of the images    
     """
-    
+
     # Constructor
     def __init__(self, image_list, **kwargs):
         """Initialization funcion of ImageViewer.
@@ -283,83 +284,83 @@ class ImageViewer:
         # Also possible, iso Format
         # print(time.strftime("%c", ts))
         # Tue Sep  1 02:21:33 2020
-        
+
         # Get user ID (SCIPER in Noto), and the number of the figure to be created
         uid = getpass.getuser().split('-')[2] if len(getpass.getuser().split('-')) > 2 else getpass.getuser()
-        fig_num = int(len(plt.get_fignums()) / 2) + 1        
-        
+        fig_num = int(len(plt.get_fignums()) / 2) + 1
+
         # Make sure that the image_list is a list of numpy arrays
         # If a numpy array is given, place it inside a list
         if type(image_list) == np.ndarray:
             image_list = [image_list]
         # If a list is given, check that all objects inside are numpy arrays. Raise exception otherwise.
-        elif type(image_list) == list:       
-            if not(all(isinstance(img, np.ndarray) for img in image_list)):
+        elif type(image_list) == list:
+            if not (all(isinstance(img, np.ndarray) for img in image_list)):
                 raise TypeError('Make sure that all your images are numpy arrays. Use the method np.array(object).')
         # Raise exception otherwise. if object type not numpy array nor list.
         else:
             raise Exception('Please give the first argument as a list of numpy arrays.')
-                
+
         # Once a list of numpy arrays is ensured, make the list an attribute of the viewer object.        
         self.image_list = image_list
-        
+
         # Get the number of images 
-        self.number_images = len(image_list)         
-        
+        self.number_images = len(image_list)
+
         # Default behaviour is to show only one image 
-        subplots = [1 ,1]
-        
+        subplots = [1, 1]
+
         # Attribute to keep track of image in display 
         self.current_image = 0
         # Attribute to keep track on wether we have a comparison
         self.compare = False
-        
+
         # Extract pixel grid parameter
         self.pixel_grid = kwargs.get('pixel_grid', False)
-        
+
         # Check if user requested a specific axis grid (subplopts = [m, n]). If so, modify the variable subplots
         if 'subplots' in kwargs:
-            subplots = kwargs.get('subplots')           
+            subplots = kwargs.get('subplots')
             # Attribute that will be use to check if single_image was required, and If so, which image is currently on display
             self.current_image = None
         elif self.pixel_grid:
             self.current_image = None
-        
+
         # Create output widget to wrap figure and handle display of images
-        self.out_fig = widgets.Output(layout = widgets.Layout(width = '80%')) #(%80 for V layouot)
+        self.out_fig = widgets.Output(layout=widgets.Layout(width='80%'))  # (%80 for V layouot)
         with self.out_fig:
             # Initialize figure and subplots inside just created widget
-            self.fig, self.axs = plt.subplots(subplots[0], subplots[1], num = f'Image {fig_num} - SCIPER: {uid} - Date: ' + date_str)   
-        # Set an appropriate size (in inches) for the figure. These are similar to matplotlib default sizes. Modify them to change image physical size. You can also set them constant, in which case, more images --> smaller images.
+            self.fig, self.axs = plt.subplots(subplots[0], subplots[1],
+                                              num=f'Image {fig_num} - SCIPER: {uid} - Date: ' + date_str)
+            # Set an appropriate size (in inches) for the figure. These are similar to matplotlib default sizes. Modify them to change image physical size. You can also set them constant, in which case, more images --> smaller images.
         if self.current_image is not None:
-            self.fig.set_size_inches([subplots[1]*4.7*1.3, subplots[0]*4.5*1.3])
+            self.fig.set_size_inches([subplots[1] * 4.7 * 1.3, subplots[0] * 4.5 * 1.3])
         else:
             if self.pixel_grid or kwargs.get('axis', False):
                 # Make it higher if the axis is displayed so as not to clip the title
-                self.fig.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.9]) 
+                self.fig.set_size_inches([subplots[1] * 4.7 * 0.84, subplots[0] * 4.5 * 0.9])
             else:
-                self.fig.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
-        # (subplots[1]*6.4*0.7, subplots[0]*5.5*0.7 for V layout, (0.84, 0.75) for IP1)               
+                self.fig.set_size_inches([subplots[1] * 4.7 * 0.84, subplots[0] * 4.5 * 0.75])
+                # (subplots[1]*6.4*0.7, subplots[0]*5.5*0.7 for V layout, (0.84, 0.75) for IP1)
         # Make sure that the axs is iterable in one foor loop (1D numpy array)
         self.axs = np.array(self.axs).reshape(-1)
 
-        
-        # This code block will get further information on the images, and store it as atttriutes of the object. 
+        # This code block will get further information on the images, and store it as atttriutes of the object.
         # First, we create lists to store the info of each image. 
-        self.original = []         # Store the originals 
-        self.data = []             # Store current data (only perform operations here)
-        self.min = []              # Min value
-        self.max = []              # Max value
-        self.dx = []               # Number of pixels in x
-        self.dy = []               # Number of pixels in y    
-        self.channels = []         # Keep count of the channels
+        self.original = []  # Store the originals
+        self.data = []  # Store current data (only perform operations here)
+        self.min = []  # Min value
+        self.max = []  # Max value
+        self.dx = []  # Number of pixels in x
+        self.dy = []  # Number of pixels in y
+        self.channels = []  # Keep count of the channels
         # Iterate through each image and prepare for plotting, according to user specifications        
-        count = 0        
+        count = 0
         for image in image_list:
-                
+
             # Check if any transformation is required by the user and perform. Assign min-max values accordingly   
             if kwargs.get('normalize', False):
-                #Stretch contrast to range [0, 1]
+                # Stretch contrast to range [0, 1]
                 image = (image - np.amin(image)) / (np.amax(image) - np.amin(image))
                 self.min.append(np.amin(image))
                 self.max.append(np.amax(image))
@@ -379,11 +380,11 @@ class ImageViewer:
             else:
                 self.min.append(np.amin(image))
                 self.max.append(np.amax(image))
-            
+
             ### Now that we have the image as the user specified it, store in attributes        
             self.original.append(np.copy(image))
             self.data.append(np.copy(image))
-            
+
             # This will be useful in case pixel_grid was requested
             try:
                 pix_dx, pix_dy = image.shape
@@ -391,18 +392,18 @@ class ImageViewer:
             except:
                 pix_dx, pix_dy, channels = image.shape
                 self.channels.append(channels)
-                if not(channels in [3, 4]):
+                if not (channels in [3, 4]):
                     raise Exception(f'Image {count} does not have a valid shape for an image.')
             self.dx.append(pix_dx)
             self.dy.append(pix_dy)
             count += 1
 
         # Now we are going to prepare the Axes. Again, initialize arrays        
-        self.im = []       # list of AxesImage objects        
-        self.cb = []       # List of colorbars        
-        self.titles = []   # List of titles        
-        self.xlim = []     # List to store the x plotting range of each figure        
-        self.ylim = []     # List to store the y plotting range of each figure
+        self.im = []  # list of AxesImage objects
+        self.cb = []  # List of colorbars
+        self.titles = []  # List of titles
+        self.xlim = []  # List to store the x plotting range of each figure
+        self.ylim = []  # List to store the y plotting range of each figure
         # Check if titles were given, if not, stringified variable name (see self.retrieve_name() at the end of the class)
         title_arg = kwargs.get('title', [])
         if type(title_arg) != list:
@@ -410,18 +411,18 @@ class ImageViewer:
         # Iterate through the number of images 
         for i in range(self.number_images):
             # Check if title was given by user. If so, append to our list of titles.
-            if i < len(title_arg): 
+            if i < len(title_arg):
                 self.titles.append(title_arg[i])
             # If not, stringify variable name and append to title list
             else:
                 self.titles.append(self.retrieve_name(self.image_list[i]))
-        
+
         # In the next for loop we will iterate through the number of images, and actually plot them (according to the use case) 
         count = 0
         for i in range(self.number_images):
             # check that we have images left to plot in our axis array (useful in case subplots option was used, and there are more spaces than images). 
             # Enter if condition if we are in the last image (in case there are more axis than images) or last axis (in case single_image)
-            if i == len(self.axs) or i == self.number_images -1:
+            if i == len(self.axs) or i == self.number_images - 1:
                 # If we're out of axis (will happen if user requested single_image or subplots = [m, n], and m*n < number_iamges), break loop
                 if len(self.axs) < len(self.data):
                     break
@@ -430,129 +431,130 @@ class ImageViewer:
                     for j in range(i + 1, len(self.axs)):
                         # Turn off any remaining axis and exit for loop
                         self.axs[j].axis('off')
-                    
+
             # Check if pixel_grid = True. Assign parameter to keep track of user request (will be useful deciding wether to show axis)
             if self.pixel_grid:
                 # use 'minor' ticks to visualize the pixels. This ones will mark the lines
                 self.axs[i].grid(which='minor')
-                self.axs[i].set_yticks(np.arange(0.5, self.dx[count]-0.5, step=1), minor=True)
-                self.axs[i].set_xticks(np.arange(0.5, self.dy[count]-0.5, step=1), minor=True)
+                self.axs[i].set_yticks(np.arange(0.5, self.dx[count] - 0.5, step=1), minor=True)
+                self.axs[i].set_xticks(np.arange(0.5, self.dy[count] - 0.5, step=1), minor=True)
                 # This tickes will mark the numbers
                 step = kwargs.get('num_step', 1)
                 self.axs[i].set_yticks(np.arange(0, self.dx[count], step=step))
                 self.axs[i].set_xticks(np.arange(0, self.dy[count], step=step))
-                
-            
+
             # Create AxesImage and plot with user-requested parameters
-            self.im.append(self.axs[i].imshow(self.data[count], 
-                          cmap = kwargs.get('cmap','gray'), clim = [self.min[count], self.max[count]]))
+            self.im.append(self.axs[i].imshow(self.data[count],
+                                              cmap=kwargs.get('cmap', 'gray'), clim=[self.min[count], self.max[count]]))
 
             # Set the user rquested title
             self.axs[i].set_title(self.titles[count])
             # Save the limits of the plot in each axis (this are the default by matplotlib)
-            self.xlim.append(np.round(self.axs[i].get_xlim(),1))
-            self.ylim.append(np.round(self.axs[i].get_ylim(),1))
+            self.xlim.append(np.round(self.axs[i].get_xlim(), 1))
+            self.ylim.append(np.round(self.axs[i].get_ylim(), 1))
 
             # Hide the axis by default 
-#             self.axs[i].axes.yaxis.set_visible(False)
-#             self.axs[i].axes.xaxis.set_visible(False)
+            #             self.axs[i].axes.yaxis.set_visible(False)
+            #             self.axs[i].axes.xaxis.set_visible(False)
             # Place the axis in the top of the image 
             self.axs[i].xaxis.tick_top()
-            count += 1   
-        
-#         self.fig.tight_layout()
-#         self.fig.canvas.font = 'monospace'
-            
+            count += 1
+
+        #         self.fig.tight_layout()
+        #         self.fig.canvas.font = 'monospace'
+
         ###############################################################################
         ### Declare widgets and link to callbacks (Names are self selfexplanatory) ####
         ###############################################################################
-        
+
         ################### Sliders ########### Values of the slider is based in percentage of total
         # Change ranges using matplotlib clim value
-        self.slider_clim = widgets.IntRangeSlider( value = [0, 100],  min = 0, max = 100, step = 1, 
-                                         description = '', continuous_update = False, layout = widgets.Layout(width = '210px') )
-        self.slider_clim.observe(self.clim_callback, 'value')        
+        self.slider_clim = widgets.IntRangeSlider(value=[0, 100], min=0, max=100, step=1,
+                                                  description='', continuous_update=False,
+                                                  layout=widgets.Layout(width='210px'))
+        self.slider_clim.observe(self.clim_callback, 'value')
 
         ################## Buttons ########## 
         # Enable Joint Zoom
-        self.button_joint_zoom = widgets.Button(description = 'Enable Joint Zoom')
+        self.button_joint_zoom = widgets.Button(description='Enable Joint Zoom')
         self.button_joint_zoom.on_click(self.joint_zoom_callback)
-        
+
         # Plot Histogram instead of data
-        self.button_hist = widgets.Button(description = 'Show Histogram')
+        self.button_hist = widgets.Button(description='Show Histogram')
         self.button_hist.on_click(self.hist_button_click)
-        
+
         # Button to displax axis coordinates
-        self.button_show_axis = widgets.Button(description = 'Hide Axis')
+        self.button_show_axis = widgets.Button(description='Hide Axis')
         self.button_show_axis.on_click(self.axis_button_click)
-        
+
         # Brightness and Contrast Legend
-        self.b_c_text = widgets.Text(value='Brightness & Contrast (%)', disabled=True, layout = widgets.Layout(width = '170px'))
-        
+        self.b_c_text = widgets.Text(value='Brightness & Contrast (%)', disabled=True,
+                                     layout=widgets.Layout(width='170px'))
+
         # Reset view and widgets original value
-        self.button_reset = widgets.Button(description = 'Reset')
+        self.button_reset = widgets.Button(description='Reset')
         self.button_reset.on_click(self.reset)
-        
+
         # If there are only two images with the same shape, declare compare button
-        self.button_compare = widgets.Button(description = 'Compare')
+        self.button_compare = widgets.Button(description='Compare')
         self.button_compare.on_click(self.compare_button)
         # If there are only two images with the same shape, declare compare button
-        
+
         # Go to Options menu Button
-        self.button_options = widgets.Button(description = 'Options')
+        self.button_options = widgets.Button(description='Options')
         self.button_options.on_click(self.options_button)
-        
+
         # Button to take screenshot and keep as numpy array
-        self.button_save = widgets.Button(description = 'Screenshot')
+        self.button_save = widgets.Button(description='Screenshot')
         self.button_save.on_click(self.save)
-        
+
         # Go to Main menu Button (Back)
-        self.button_back = widgets.Button(description = 'Back')
+        self.button_back = widgets.Button(description='Back')
         self.button_back.on_click(self.back_button_callback)
-        
+
         # Set Colorbar button 
-        self.button_colorbar = widgets.Button(description = 'Set Colorbar')
+        self.button_colorbar = widgets.Button(description='Set Colorbar')
         self.button_colorbar.on_click(self.colorbar_button_click)
-        
+
         # Show Widgets self.number_images
-        self.button_showw = widgets.Button(description = 'Show Widgets')
+        self.button_showw = widgets.Button(description='Show Widgets')
         self.button_showw.on_click(self.showw_button_callback)
-        
+
         # Buttons to navigate through images. Only activated if the user requested single image display
         if self.current_image is not None:
-            
-            # Button next image ('\U02190' for right arrow, not supported by python apparently)        
-            self.button_next = widgets.Button(description = 'Next', layout = widgets.Layout(width = '80px'))
+            # Button next image ('\U02190' for right arrow, not supported by python apparently)
+            self.button_next = widgets.Button(description='Next', layout=widgets.Layout(width='80px'))
             self.button_next.on_click(self.next_button_callback)
             # Button prev image ('\U02192' for left arrow)
-            self.button_prev = widgets.Button(description = 'Prev', layout = widgets.Layout(width = '80px'))
+            self.button_prev = widgets.Button(description='Prev', layout=widgets.Layout(width='80px'))
             self.button_prev.on_click(self.prev_button_callback)
             # Wrap both buttons in one Horizontal widget
             self.next_prev_buttons = widgets.HBox([self.button_prev, self.button_next])
-        
+
         ##################### Text
         # Get stats. Instead of connecting to a callback, it is updated continuously
-#         mean, std, min_value, max_value, num_channels, shape, xlim, ylim, descriptive_string = self.get_statistics()
+        #         mean, std, min_value, max_value, num_channels, shape, xlim, ylim, descriptive_string = self.get_statistics()
         _, _, _, _, _, _, _, descriptive_string = self.get_statistics()
-        self.stats_text = widgets.Textarea(value = descriptive_string[0], continuous_update = True,
-                                           layout = widgets.Layout(width = '170px', height = '220px'), disabled = True) 
-        
+        self.stats_text = widgets.Textarea(value=descriptive_string[0], continuous_update=True,
+                                           layout=widgets.Layout(width='170px', height='220px'), disabled=True)
+
         #################################### Dropdown menus
         # Choose a colormap. Try to get the user one, otherwise set to 'gray'
         self.cmap_orig = kwargs.get('cmap', 'gray')
         # If the usermap from the user is not supported, we use it (we have already plotted the image) but set the Dropdown menu to gray 
-        if not(self.cmap_orig in ['gray', 'viridis', 'inferno', 'ocean', 'nipy_spectral', 'copper', 'spring', 'magma', 'hsv']):
+        if not (self.cmap_orig in ['gray', 'viridis', 'inferno', 'ocean', 'nipy_spectral', 'copper', 'spring', 'magma',
+                                   'hsv']):
             self.cmap_orig = 'gray'
         # Declare Dropdown menu
-        self.dropdown_cmap = widgets.Dropdown(options = ['gray', 'viridis', 'inferno', 'ocean', 
-                                                         'nipy_spectral', 'copper', 'spring', 'magma', 'hsv'], 
-                                              value = self.cmap_orig, 
-                                              disabled = False, 
-                                              layout = widgets.Layout(width = '65%'))
+        self.dropdown_cmap = widgets.Dropdown(options=['gray', 'viridis', 'inferno', 'ocean',
+                                                       'nipy_spectral', 'copper', 'spring', 'magma', 'hsv'],
+                                              value=self.cmap_orig,
+                                              disabled=False,
+                                              layout=widgets.Layout(width='65%'))
         self.dropdown_cmap.observe(self.cmap_callback, 'value')
-        
+
         # The next attribute keeps track of wether the user requested any extra widdgets
-        self.extra_widgets = False                
+        self.extra_widgets = False
         if 'new_widgets' in kwargs:
             self.extra_widgets = True
             # Get new widgets and callback as attributes
@@ -562,11 +564,11 @@ class ImageViewer:
                 raise TypeError('Please provide your widgets in a list (with the button as the last element), and the callback to your button \
                         also as a list in the parameter callbacks.')
             # Create button , and menu, to display the additional widget
-            self.button_show_x_w = widgets.Button(description = 'Extra Widgets')
+            self.button_show_x_w = widgets.Button(description='Extra Widgets')
             self.button_show_x_w.on_click(self.x_w_button_callback)
             # Link last widget (button) to the given callback
             self.usr_defined_widgets[-1].on_click(self.x_w_callback)
-        
+
         # store Line2d objects generated when plotting clickable points
         self.clickable = False
         self.block_clicks = False
@@ -574,11 +576,11 @@ class ImageViewer:
             self.clickable = True
             # Create textarea widget
             self.txt = widgets.Textarea(
-                    value ='',
-                    placeholder='',
-                    description='',
-                    disabled=False
-                )
+                value='',
+                placeholder='',
+                description='',
+                disabled=False
+            )
             # save mouse coordinates
             self.mouse_coords = []
             # keep track of click count
@@ -594,18 +596,18 @@ class ImageViewer:
             if 'subplots' in kwargs:
                 self.subplot_click = True
 
-
             # event listener on click
             self.cid = self.fig.canvas.mpl_connect('button_press_event', self.onclick)
-            
+
         ########################## Wrap widgets in boxes, according to the menu and use case ################################
         # Declare 'base' widget list for main menu. Depending on other parameters, it will be modified
-        widget_list = [self.b_c_text, self.slider_clim, self.button_hist, self.button_options, self.button_reset, self.stats_text]
-        
+        widget_list = [self.b_c_text, self.slider_clim, self.button_hist, self.button_options, self.button_reset,
+                       self.stats_text]
+
         # If more than one image, add next and previous buttons
         if self.current_image is not None and self.number_images > 1:
             widget_list.insert(5, self.next_prev_buttons)
-            
+
         # If extra widgets are given, add extra widgets button
         if self.extra_widgets:
             widget_list.insert(4, self.button_show_x_w)
@@ -614,26 +616,27 @@ class ImageViewer:
             widget_list.remove(self.slider_clim)
             widget_list.remove(self.button_hist)
             widget_list.remove(self.b_c_text)
-            
+
         # Create view    
         self.init_view_rightb = widgets.VBox(widget_list)
-        
+
         options_widget_list = [self.dropdown_cmap, self.button_show_axis, self.button_colorbar, self.button_joint_zoom,
-                                 self.button_compare, self.button_back, self.stats_text]
-        
+                               self.button_compare, self.button_back, self.stats_text]
+
         # If all images are RGB/RGBA, hide buttons
         if all(c in [3, 4] for c in self.channels):
-            options_widget_list = [self.button_show_axis, self.button_joint_zoom, self.button_compare, self.button_back, self.stats_text]
-        
+            options_widget_list = [self.button_show_axis, self.button_joint_zoom, self.button_compare, self.button_back,
+                                   self.stats_text]
+
         # If there is only one image in display, remove button 'Enable joint zoom'
         if self.current_image is not None:
             options_widget_list.remove(self.button_joint_zoom)
-        
-        if not(self.number_images == 2 and self.original[0].shape == self.original[1].shape):
+
+        if not (self.number_images == 2 and self.original[0].shape == self.original[1].shape):
             options_widget_list.remove(self.button_compare)
-            
+
         self.options_view_rightb = widgets.VBox(options_widget_list)
-        
+
         # Extra_widgets menu (includes sliders, stats, and back button).
         if self.extra_widgets:
             # This cycle first appends the back button and the stats to the list given by the user.
@@ -641,61 +644,62 @@ class ImageViewer:
             self.usr_defined_widgets.append(self.stats_text)
             # Then wraps the list in a VBoc widget
             self.x_widget_view = widgets.VBox(self.usr_defined_widgets)
-                
+
         # Out widget that will hide or show the histograms, depending on use case
-        self.hist_container = widgets.Output()                           
-                 
+        self.hist_container = widgets.Output()
+
         # Output widget to enclose histogram (this one will hold it permanently)
-        self.out_hist = widgets.Output(layout = widgets.Layout(width = '100%'))   #(85% for V layout) 
+        self.out_hist = widgets.Output(layout=widgets.Layout(width='100%'))  # (85% for V layout)
         # Initialize histogram figure. The subplots shape is the same as in the images figure
-        with self.out_hist:            
-            self.fig_hist, self.axs_hist = plt.subplots(subplots[0], subplots[1], num = f'Histogram {fig_num} - SCIPER: {uid}') 
-#         self.fig_hist.set_size_inches([subplots[1]*4.7*0.65, subplots[0]*4.5*0.72]) #(V layout: See self.fig)
+        with self.out_hist:
+            self.fig_hist, self.axs_hist = plt.subplots(subplots[0], subplots[1],
+                                                        num=f'Histogram {fig_num} - SCIPER: {uid}')
+        #         self.fig_hist.set_size_inches([subplots[1]*4.7*0.65, subplots[0]*4.5*0.72]) #(V layout: See self.fig)
         if self.current_image is not None:
-            self.fig_hist.set_size_inches([subplots[1]*4.7*0.5, subplots[0]*4.5*0.55])
+            self.fig_hist.set_size_inches([subplots[1] * 4.7 * 0.5, subplots[0] * 4.5 * 0.55])
         else:
-            self.fig_hist.set_size_inches([subplots[1]*4.7*0.84, subplots[0]*4.5*0.75]) 
-#         self.fig_hist.canvas.toolbar_visible = False    
-        
+            self.fig_hist.set_size_inches([subplots[1] * 4.7 * 0.84, subplots[0] * 4.5 * 0.75])
+        #         self.fig_hist.canvas.toolbar_visible = False
+
         # Ensure that hist axes are iterable in one loop (1D np array)
         self.axs_hist = np.array(self.axs_hist).reshape(-1)
-        
+
         # Get histogram information and plot (see function) 
         self.update_histogram()
-    
+
         # Out widget to contain other widgets (buttons, sliders, etc)
-        self.out = widgets.Output(layout = widgets.Layout(width = '25%'))      
+        self.out = widgets.Output(layout=widgets.Layout(width='25%'))
         # Names self explanatory
         self.final_view_no_hist = widgets.HBox([self.out_fig, self.out])
-        self.final_view_hist = widgets.HBox([self.out_fig, self.hist_container, self.out])       #H layout
-#         self.final_view_hist = widgets.VBox([self.final_view_no_hist, self.hist_container])    # V layout
+        self.final_view_hist = widgets.HBox([self.out_fig, self.hist_container, self.out])  # H layout
+        #         self.final_view_hist = widgets.VBox([self.final_view_no_hist, self.hist_container])    # V layout
         display(self.final_view_hist)
-    
+
         # Final check of use specs, and call appropriate functions
         # We use Matplotlib own handlers for changes on the x/y lims (see function) 
         self.link_axs()
         # If histogram requested, display hist and widgets (se we set self.widgets to True)
         if kwargs.get('hist', False):
             # Display histogram and change button description (see button)
-            self.show_histogram(hist = True)
+            self.show_histogram(hist=True)
             self.button_hist.description = 'Close Histogram'
             self.widgets = True
         # If only widgets were requested, set to Tre
         elif kwargs.get('widgets', False):
-            self.widgets = True            
-        # If hist/widgets not requested, only set to visible button Show Widgets
+            self.widgets = True
+            # If hist/widgets not requested, only set to visible button Show Widgets
         else:
             self.widgets = False
             display(self.button_showw)
         # Show axis only on request, or if pixel_grid was requested
         if kwargs.get('axis', False) or self.pixel_grid:
             self.button_show_axis.description = 'Hide Axis'
-            self.set_axis(axis = True)
+            self.set_axis(axis=True)
         else:
             self.button_show_axis.description = 'Show Axis'
-            self.set_axis(axis = False)
+            self.set_axis(axis=False)
         # Show colorbar on request
-        if kwargs.get('colorbar', False): 
+        if kwargs.get('colorbar', False):
             self.button_colorbar.description = 'Hide Colorbar'
             self.set_colorbar()
         if kwargs.get('joint_zoom', False):
@@ -706,25 +710,25 @@ class ImageViewer:
         self.update_view()
         self.update_hist_lines()
         # Override matplotlib home button
-#         home_func = backend_bases.NavigationToolbar2.home
+        #         home_func = backend_bases.NavigationToolbar2.home
 
-#         def new_home(self, *args, **kwargs):
-#             home_func(self, *args, **kwargs)
-#             self.reset(change = None)
-            
-#         backend_bases.NavigationToolbar2.home = new_home
-                 
+        #         def new_home(self, *args, **kwargs):
+        #             home_func(self, *args, **kwargs)
+        #             self.reset(change = None)
+
+        #         backend_bases.NavigationToolbar2.home = new_home
+
         if self.current_image is not None:
             self.change_image(0)
         # Get comparison if necessary
         if kwargs.get('compare', False):
-            self.compare_button(change = None)
-        
-##########################################################################     
-########################## End of init function ##########################
-##########################################################################     
-############### Event Handlers (Names are self-explanatory) ##############
-##########################################################################
+            self.compare_button(change=None)
+
+    ##########################################################################
+    ########################## End of init function ##########################
+    ##########################################################################
+    ############### Event Handlers (Names are self-explanatory) ##############
+    ##########################################################################
 
     def clim_callback(self, change):
         """Callback of `slider_clim`.
@@ -742,15 +746,15 @@ class ImageViewer:
         """
         count = 0
         # Iterate through each AxesImage and apply new clim
-        for im in self.im: 
+        for im in self.im:
             # If condition: make sure that if single_image is set, the limits for the correct image are chosen
             if self.current_image is not None:
                 count = self.current_image
-            im.set_clim(change.new[0]*0.01*(self.max[count] - self.min[count]) + self.min[count], 
-                        change.new[1]*0.01*(self.max[count] - self.min[count]) + self.min[count])
-            count +=1
+            im.set_clim(change.new[0] * 0.01 * (self.max[count] - self.min[count]) + self.min[count],
+                        change.new[1] * 0.01 * (self.max[count] - self.min[count]) + self.min[count])
+            count += 1
         self.update_hist_lines()
-    
+
     ## Button Callbacks 
     def joint_zoom_callback(self, change=None):
         """Callback of button *Enable Joint Zoom*.
@@ -762,9 +766,9 @@ class ImageViewer:
         if self.button_joint_zoom.description == 'Enable Joint Zoom':
             self.button_joint_zoom.description = 'Disable Joint Zoom'
             # Share axes for joint zooming
-            for i in range(len(self.axs)-1):
-                self.axs[i].get_shared_x_axes().join(self.axs[i], self.axs[i+1])
-                self.axs[i].get_shared_y_axes().join(self.axs[i], self.axs[i+1])
+            for i in range(len(self.axs) - 1):
+                self.axs[i].get_shared_x_axes().join(self.axs[i], self.axs[i + 1])
+                self.axs[i].get_shared_y_axes().join(self.axs[i], self.axs[i + 1])
         else:
             self.button_joint_zoom.description = 'Enable Joint Zoom'
             # Unshare axes for individual zooming
@@ -773,24 +777,24 @@ class ImageViewer:
                 [g.remove(a) for a in g.get_siblings(self.axs[i])]
                 g = self.axs[i].get_shared_y_axes()
                 [g.remove(a) for a in g.get_siblings(self.axs[i])]
-    
+
     def hist_button_click(self, change):
         """Callback of button *Show Hist*, to show or hide the histogram
         """
         # Check the current state, change, and act accordingly
-        if self.button_hist.description == 'Show Histogram':           
-            self.button_hist.description = 'Close Histogram' 
-            self.show_histogram(hist = True)
+        if self.button_hist.description == 'Show Histogram':
+            self.button_hist.description = 'Close Histogram'
+            self.show_histogram(hist=True)
         else:
-            self.button_hist.description = 'Show Histogram'            
-            self.show_histogram(hist = False)
-        
+            self.button_hist.description = 'Show Histogram'
+            self.show_histogram(hist=False)
+
     def options_button(self, change):
         """Callback of button *Options*, to switch to options menu
         """
         self.view = 'options'
         self.update_view()
-        
+
     def compare_button(self, change):
         """Callback of button *Compare*.
 
@@ -803,12 +807,13 @@ class ImageViewer:
             return
         # Get error array (Red RGB image of appropriate size with normalized difference as transparency)
         if all(c == 1 for c in self.channels):
-            
+
             diff = np.abs(self.original[1] - self.original[0])
             # Normalize if necessary
             if (diff.max() - diff.min()) != 0:
                 diff = (diff - diff.min()) / (diff.max() - diff.min())
-            self.error = np.dstack((np.ones_like(self.original[0]), np.zeros_like(self.original[0]), np.zeros_like(self.original[0]), diff))  
+            self.error = np.dstack((np.ones_like(self.original[0]), np.zeros_like(self.original[0]),
+                                    np.zeros_like(self.original[0]), diff))
 
         elif all(c == 3 for c in self.channels):
             diff_r = np.abs(self.original[1][:, :, 0] - self.original[0][:, :, 0])
@@ -821,9 +826,9 @@ class ImageViewer:
             if (diff_b.max() - diff_b.min()) != 0:
                 diff_b = (diff_b - diff_b.min()) / (diff_b.max() - diff_b.min())
             self.error = np.dstack((diff_r, diff_g, diff_b))
-            
+
         if self.current_image is None:
-            for i in range(self.number_images):     
+            for i in range(self.number_images):
                 if self.channels[i] in [3, 4]:
                     ############### In docs, alpha can have same shape as data. In practice, it needs to be 2D
                     self.axs[i].clear()
@@ -833,7 +838,7 @@ class ImageViewer:
         else:
             if self.channels[self.current_image] in [3, 4]:
                 self.axs[0].clear()
-#                     self.axs[0].imshow(cv.cvtColor(self.data[self.current_image], cv.COLOR_BGR2GRAY), alpha=self.error)
+                #                     self.axs[0].imshow(cv.cvtColor(self.data[self.current_image], cv.COLOR_BGR2GRAY), alpha=self.error)
                 self.axs[0].imshow(self.error)
             else:
                 self.axs[0].imshow(self.error)
@@ -843,7 +848,7 @@ class ImageViewer:
         """
         self.view = 'initial'
         self.update_view()
-        
+
     def x_w_button_callback(self, change):
         """Callback of button *Extra Widgets*, to go to Extra Widgets menu
 
@@ -852,7 +857,7 @@ class ImageViewer:
         """
         self.view = 'x_widget'
         self.update_view()
-            
+
     def reset_clickables(self):
         """Button to reset information on clickables.
 
@@ -866,7 +871,7 @@ class ImageViewer:
         for i in range(self.number_images):
             for j in range(len(self.axs[i].lines)):
                 self.axs[i].lines[0].remove()
-    
+
     def reset(self, change):
         """Button to reset the state of the viewer
 
@@ -878,11 +883,11 @@ class ImageViewer:
         if self.clickable:
             self.reset_clickables()
             self.block_clicks = False
-        
+
         # Get all parameters of the object to initial values    
         self.slider_clim.value = [0, 100]
         self.view = 'initial'
-        self.dropdown_cmap.value = self.cmap_orig                     
+        self.dropdown_cmap.value = self.cmap_orig
         # Get images back to the originals (In case any function/ transformation has been applied)
         for i in range(self.number_images):
             self.data[i] = np.copy(self.original[i])
@@ -891,33 +896,34 @@ class ImageViewer:
         # This for loop replots every image (Redefines the AxesImage in the attribute self.im)
         for i in range(self.number_images):
             # If there is only one image, act on this one (self.current_image) and break loop
-#             self.axs[i].clear()
+            #             self.axs[i].clear()
             if self.current_image is not None:
-                self.im[0] = self.axs[0].imshow(self.data[self.current_image], 
-                                                clim = [self.min[self.current_image], self.max[self.current_image]],
-                                                cmap = self.dropdown_cmap.value)
+                self.im[0] = self.axs[0].imshow(self.data[self.current_image],
+                                                clim=[self.min[self.current_image], self.max[self.current_image]],
+                                                cmap=self.dropdown_cmap.value)
                 self.xlim[0] = np.array([0 - 0.5, self.image_list[self.current_image].shape[1] - 0.5])
                 self.ylim[0] = np.array([self.image_list[self.current_image].shape[0] - 0.5, 0 - 0.5])
                 break
-                
-            if i == len(self.axs) or i == self.number_images :
-#                 if len(self.axs) < len(self.data):
+
+            if i == len(self.axs) or i == self.number_images:
+                #                 if len(self.axs) < len(self.data):
                 break
-            self.im[i] = self.axs[i].imshow(self.data[i], clim = [self.min[i], self.max[i]], cmap = self.dropdown_cmap.value)
+            self.im[i] = self.axs[i].imshow(self.data[i], clim=[self.min[i], self.max[i]],
+                                            cmap=self.dropdown_cmap.value)
             self.xlim[i] = np.array([0 - 0.5, self.image_list[i].shape[1] - 0.5])
             self.ylim[i] = np.array([self.image_list[i].shape[0] - 0.5, 0 - 0.5])
-        
+
         # Hide Colorbar and axis
-        self.set_colorbar(colorbar = False)
+        self.set_colorbar(colorbar=False)
         self.button_colorbar.description = 'Set Colorbar'
-        self.set_axis(axis = False)
+        self.set_axis(axis=False)
         self.button_show_axis.description = 'Show Axis'
         # Reset zoom 
         count = 0
         for ax in self.axs:
             # If we are out of images (we may have more Axes, but they should be off)
-            if count == self.number_images: 
-                break            
+            if count == self.number_images:
+                break
             ax.set_xlim(self.xlim[count])
             ax.set_ylim(self.ylim[count])
             count += 1
@@ -925,41 +931,41 @@ class ImageViewer:
         self.update_stats()
         self.update_histogram()
         self.update_hist_lines()
-    
+
     def showw_button_callback(self, change):
         """Callback of button *Back*, to show main menu.
         """
         # Set widgets on request
         self.set_widgets()
-    
+
     def axis_button_click(self, change):
         """Callback of button *Show/Hide Axis*, to show/hide the image axis.
         """
         # Set Axes and change description of button accordingly
         if self.button_show_axis.description == 'Show Axis':
             self.button_show_axis.description = 'Hide Axis'
-            self.set_axis(axis = True)
+            self.set_axis(axis=True)
         else:
             self.button_show_axis.description = 'Show Axis'
-            self.set_axis(axis = False)
-            
+            self.set_axis(axis=False)
+
     def colorbar_button_click(self, change):
         """Callback of button *Set/Hide Colorbar*, to show/hide the colorbar.
         """
         # Set colorbar and change description of button accordingly
         if self.button_colorbar.description == 'Set Colorbar':
             self.button_colorbar.description = 'Hide Colorbar'
-            self.set_colorbar(colorbar = True)
+            self.set_colorbar(colorbar=True)
         else:
             self.button_colorbar.description = 'Set Colorbar'
-            self.set_colorbar(colorbar = False)
-    
+            self.set_colorbar(colorbar=False)
+
     def cmap_callback(self, change):
         """Callback of cmap menu, to change the colormap to the selected one.
         """
         # Set the colormap of the images
-        self.set_colormap(colormap = change.new)
-        
+        self.set_colormap(colormap=change.new)
+
     def prev_button_callback(self, change):
         """Callback of *Prev* button, to browse to the previous image.
 
@@ -968,7 +974,7 @@ class ImageViewer:
         """
         # Change image to one before the currently plotted 
         self.change_image(-1)
-        
+
     def next_button_callback(self, change):
         """Callback of *Next* button, to browse to the previous image.
 
@@ -998,7 +1004,7 @@ class ImageViewer:
                 raise Exception('Please provide either one callback, or the exact number of callbacks as images. The nth callback\
                                 will be applied to the nth image')
             multi_callback = True
-            
+
         # Iterate through all images
         for i in range(self.number_images):
             # Restore image, so to perform operation on original
@@ -1011,7 +1017,7 @@ class ImageViewer:
                     self.data[i] = self.usr_defined_callbacks[0](self.data[i])
                 else:
                     # If clickable, add mouse coords to the callback function
-                    if i==0:
+                    if i == 0:
                         if self.line:
                             self.data[0] = self.usr_defined_callbacks[0](self.data[0], self.mouse_coords)
                         else:
@@ -1020,11 +1026,11 @@ class ImageViewer:
                         self.block_clicks = True
             self.max[i] = np.amax(self.data[i])
             self.min[i] = np.amin(self.data[i])
-            
+
         # Update plot. If condition checks is there is only one image being displayed
         if self.current_image is not None:
             # This function will reset the image
-            self.change_image(change = 0)
+            self.change_image(change=0)
         else:
             # Restore attribute to store AxesImage objects
             self.im = []
@@ -1032,22 +1038,25 @@ class ImageViewer:
             # Iterate through every axis
             i = 0
             for ax in self.axs:
-                #Replot the results of the operation with the proper parameters
-                self.im.append(ax.imshow(self.data[i], cmap = self.dropdown_cmap.value, 
-                              clim = (self.slider_clim.value[0]*0.01*(self.max[i] - self.min[i]) + self.min[i], 
-                                      self.slider_clim.value[1]*0.01*(self.max[i] - self.min[i]) + self.min[i],)))
+                # Replot the results of the operation with the proper parameters
+                self.im.append(ax.imshow(self.data[i], cmap=self.dropdown_cmap.value,
+                                         clim=(
+                                             self.slider_clim.value[0] * 0.01 * (self.max[i] - self.min[i]) + self.min[
+                                                 i],
+                                             self.slider_clim.value[1] * 0.01 * (self.max[i] - self.min[i]) + self.min[
+                                                 i],)))
                 count += 1
                 i += 1
         # Update statistics and histogram
         self.update_stats()
         self.update_histogram()
-        
-##########################################################     
-## Update_stats() & update_view: Either of those get called on 
-## every widget update, for the visualization to respond accordingly
-########################################################## 
-                
-    def update_stats(self, clicks = ""):
+
+    ##########################################################
+    ## Update_stats() & update_view: Either of those get called on
+    ## every widget update, for the visualization to respond accordingly
+    ##########################################################
+
+    def update_stats(self, clicks=""):
         """Function to update the satatistics on the images in display.
 
         It is called in almost any event of the ImageViewer (zooming,
@@ -1056,11 +1065,11 @@ class ImageViewer:
         """
 
         # Get statistics
-        _, _, _, _, _, _, _, descriptive_string = self.get_statistics()       
+        _, _, _, _, _, _, _, descriptive_string = self.get_statistics()
         # Update stats_text_widget
         self.stats_text.value = descriptive_string + clicks
 
-    def onclick(self,event):
+    def onclick(self, event):
         """Function to process clicking events on the images
 
         It is only called if ImageViewer was instantiated with the parameter
@@ -1071,17 +1080,19 @@ class ImageViewer:
         if not self.block_clicks:
             # need only for points for mapping
             if not self.line:
-                index=len(self.mouse_coords)%2
+                index = len(self.mouse_coords) % 2
                 # check that user in on the right subplot
                 if event.inaxes == self.axs[index]:
                     if len(self.mouse_coords) < 4:
                         # increment click count upon new entry
-                        self.click_count +=1
+                        self.click_count += 1
                         # register mouse coordinates on click
-                        self.mouse_coords.append({'click': self.click_count, 'x' : event.xdata,
-                                      'y' : event.ydata})
+                        self.mouse_coords.append({'click': self.click_count, 'x': event.xdata,
+                                                  'y': event.ydata})
 
-                        self.txt.value =str([str("click:%d,x=%f, y=%f"%(item['click'],item['x'],item['y'])) for item in self.mouse_coords])
+                        self.txt.value = str(
+                            [str("click:%d,x=%f, y=%f" % (item['click'], item['x'], item['y'])) for item in
+                             self.mouse_coords])
                         # print coordinates in statistics section
                         self.update_stats(self.txt.value)
                         # draw according points on canvas
@@ -1090,17 +1101,18 @@ class ImageViewer:
                         self.reset_clickables()
 
             else:
-                if len(self.mouse_coords) <2 :
+                if len(self.mouse_coords) < 2:
 
-                    self.mouse_coords.append({'click': self.click_count, 'x' : event.xdata,
-                                  'y' : event.ydata})
-                    self.txt.value =str([str("click:%d,x=%f, y=%f"%(item['click'],item['x'],item['y'])) for item in self.mouse_coords])
+                    self.mouse_coords.append({'click': self.click_count, 'x': event.xdata,
+                                              'y': event.ydata})
+                    self.txt.value = str([str("click:%d,x=%f, y=%f" % (item['click'], item['x'], item['y'])) for item in
+                                          self.mouse_coords])
 
                     self.update_stats(self.txt.value)
 
-                    if len(self.mouse_coords) % 2 == 1: 
+                    if len(self.mouse_coords) % 2 == 1:
                         self.draw_point(0)
-                    else: 
+                    else:
                         self.draw_line()
                 return
 
@@ -1114,24 +1126,22 @@ class ImageViewer:
         x = [p['x'] for p in self.mouse_coords]
         y = [p['y'] for p in self.mouse_coords]
 
-        point = self.axs[0].plot(x,y,'ro',80)
+        point = self.axs[0].plot(x, y, 'ro', 80)
 
-        self.lines.append(self.axs[0].plot(x,y,'r',80)[0])
+        self.lines.append(self.axs[0].plot(x, y, 'r', 80)[0])
         self.append(point)
 
-
         self.fig.canvas.draw()
 
-
-    def draw_point(self,index):
+    def draw_point(self, index):
         """Auxiliary function to draw points when a user clicks, if clickable mode.
         """
-        color = ['ro','bo']
-        x = [p['x'] for i,p in enumerate(self.mouse_coords) if i %2 ==index]
-        y = [p['y'] for i,p in enumerate(self.mouse_coords) if i %2 ==index]
-        self.axs[index].plot(x,y,color[index])
+        color = ['ro', 'bo']
+        x = [p['x'] for i, p in enumerate(self.mouse_coords) if i % 2 == index]
+        y = [p['y'] for i, p in enumerate(self.mouse_coords) if i % 2 == index]
+        self.axs[index].plot(x, y, color[index])
         self.fig.canvas.draw()
-        
+
     def update_hist_lines(self):
         """Function to reflect changes of brightness and contrast on the histogram
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
@@ -1141,31 +1151,32 @@ class ImageViewer:
         """
         count = 0
         # Get range
-        xmin = self.slider_clim.value[0]*0.01
-        xmax = self.slider_clim.value[1]*0.01
+        xmin = self.slider_clim.value[0] * 0.01
+        xmax = self.slider_clim.value[1] * 0.01
         # Iterate through every axes that holds a histogram
         for i in range(len(self.axs_hist)):
             # Stop condition (in case subplots = [m, n], where m*n > num_images)
-            if count == len(self.data): 
+            if count == len(self.data):
                 break
             # Clear existing lines
-#             ax.lines.clear()      
-#             # Declare new lines that span all the yrange and the xrange given by the slider. They act on axes 'ax', and figure  'fig_hist'
-#             l1 = lines.Line2D([xmin, xmax], [0, 1], transform=ax.transAxes, figure=self.fig_hist, color = 'k')
-#             # Make the axes show the lines
-#             ax.lines.extend([l1])
+            #             ax.lines.clear()
+            #             # Declare new lines that span all the yrange and the xrange given by the slider. They act on axes 'ax', and figure  'fig_hist'
+            #             l1 = lines.Line2D([xmin, xmax], [0, 1], transform=ax.transAxes, figure=self.fig_hist, color = 'k')
+            #             # Make the axes show the lines
+            #             ax.lines.extend([l1])
             if self.current_image is not None:
                 i = self.current_image
-            data = [xmin * (self.max[i] - self.min[i]) +self.min[i], xmax * (self.max[i] - self.min[i]) +self.min[i]]
+            data = [xmin * (self.max[i] - self.min[i]) + self.min[i], xmax * (self.max[i] - self.min[i]) + self.min[i]]
             try:
                 self.lines[count][0].set_xdata(data)
             except:
                 pass
-#             else:
-#                 self.lines[i][0].set_xdata([xmin*self.max[self.current_image]+self.min[self.current_image]*(xmax - xmin), xmax*self.max[self.current_image]])
-            count +=1
-#         plt.draw()
-                   
+            #             else:
+            #                 self.lines[i][0].set_xdata([xmin*self.max[self.current_image]+self.min[self.current_image]*(xmax - xmin), xmax*self.max[self.current_image]])
+            count += 1
+
+    #         plt.draw()
+
     def update_view(self):
         """Function that updates the widget menu as requested by a user.
         """
@@ -1189,9 +1200,9 @@ class ImageViewer:
             # If widgets are turned off, we just clear the output of the widgets and the hist container.
             self.out.clear_output()
             self.hist_container.clear_output()
-    
+
     # Function to be used if single_image = True, by buttons prev and next
-    def change_image(self, change = 0):
+    def change_image(self, change=0):
         """Called by the buttons *Prev*/*Next* to browse through the images.
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
         This image takes care of changing the images, and updating the
@@ -1206,10 +1217,10 @@ class ImageViewer:
         if self.current_image + change in range(self.number_images):
             # Update attribute self.current_image
             self.current_image += change
-            
+
             # Local variable
             curr_img = self.current_image
-            
+
             # Keep track of wether the new and the previous image have the same shape 
             if self.data[curr_img].shape == self.data[curr_img - change].shape:
                 old_axis = [self.xlim[0], self.ylim[0]]
@@ -1223,50 +1234,54 @@ class ImageViewer:
                 add_cb = True
                 self.cb[0].remove()
             # Redefine AxesImage (plot image) with the correct clim
-            self.im.append(self.axs[0].imshow(self.data[curr_img], cmap = self.dropdown_cmap.value, 
-                                              clim = (self.slider_clim.value[0]*0.01*(self.max[curr_img] -
-                                                      self.min[curr_img]) + self.min[curr_img], 
-                                                      self.slider_clim.value[1]*0.01*(self.max[curr_img] -
-                                                      self.min[curr_img]) + self.min[curr_img],)))
-#             if self.compare and self.current_image == 2:
-#                 self.axs[0].imshow(self.error)
+            self.im.append(self.axs[0].imshow(self.data[curr_img], cmap=self.dropdown_cmap.value,
+                                              clim=(self.slider_clim.value[0] * 0.01 * (self.max[curr_img] -
+                                                                                        self.min[curr_img]) + self.min[
+                                                        curr_img],
+                                                    self.slider_clim.value[1] * 0.01 * (self.max[curr_img] -
+                                                                                        self.min[curr_img]) + self.min[
+                                                        curr_img],)))
+            #             if self.compare and self.current_image == 2:
+            #                 self.axs[0].imshow(self.error)
             # Set correct title
             self.axs[0].set_title(self.titles[curr_img])
             # Repeat process for histogram
             if self.channels[curr_img] in [3, 4]:
                 self.axs_hist[0].clear()
-                self.axs_hist[0].axis('off')  
+                self.axs_hist[0].axis('off')
                 self.lines.append(None)
             else:
                 self.axs_hist[0].clear()
-                self.axs_hist[0].bar(self.bins[curr_img][:-1], self.hist[curr_img], 
-                                 width = (self.bins[curr_img][1] - self.bins[curr_img][0]) / 1.2) 
-                            # Uncomment if condition to show y-axis
-#                 if self.button_show_axis.description == 'Show Axis':
-#                 self.axs_hist[0].axes.yaxis.set_visible(False)
+                self.axs_hist[0].bar(self.bins[curr_img][:-1], self.hist[curr_img],
+                                     width=(self.bins[curr_img][1] - self.bins[curr_img][0]) / 1.2)
+                # Uncomment if condition to show y-axis
+                #                 if self.button_show_axis.description == 'Show Axis':
+                #                 self.axs_hist[0].axes.yaxis.set_visible(False)
                 self.axs_hist[0].set_yticks([])
                 self.axs_hist[0].set_ylabel('Count')
                 self.axs_hist[0].set_xlabel('Bin')
-                self.axs_hist[0].set_title(self.titles[curr_img])  
+                self.axs_hist[0].set_title(self.titles[curr_img])
                 if self.max[0] != self.min[0]:
                     # Assigning this limit is to fully visualize the first bin, otherwise, half of the bin gets lost
-                    self.axs_hist[0].set_xlim(self.min[self.current_image] - 0.01  *(self.max[self.current_image] 
-                                                - self.min[self.current_image]), self.max[self.current_image])
+                    self.axs_hist[0].set_xlim(self.min[self.current_image] - 0.01 * (self.max[self.current_image]
+                                                                                     - self.min[self.current_image]),
+                                              self.max[self.current_image])
                 else:
                     # If there is only one value in the image, mpl adjusts automatically but throws warning that we want to hide
                     self.axs_hist[0].set_xlim(self.min[self.current_image] - 0.05, self.min[self.current_image] + 0.05)
-                self.axs_hist[0].set_ylim(0, 1.1*np.amax(self.hist[curr_img]))
-            
+                self.axs_hist[0].set_ylim(0, 1.1 * np.amax(self.hist[curr_img]))
+
                 ### Block to set lines
-                xmin = self.slider_clim.value[0]*0.01
-                xmax = self.slider_clim.value[1]*0.01
-    #             self.lines[0][0].set_xdata([xmin*self.max[self.current_image], xmax*self.max[self.current_image]])
-                data = [xmin*(self.max[curr_img]-self.min[curr_img])+self.min[curr_img], 
-                        xmax*(self.max[curr_img]-self.min[curr_img])+self.min[curr_img]]
-                self.lines.append(self.axs_hist[0].plot(data, self.axs_hist[0].get_ylim(), 'k', linewidth = '0.3', linestyle = 'dashed'))
+                xmin = self.slider_clim.value[0] * 0.01
+                xmax = self.slider_clim.value[1] * 0.01
+                #             self.lines[0][0].set_xdata([xmin*self.max[self.current_image], xmax*self.max[self.current_image]])
+                data = [xmin * (self.max[curr_img] - self.min[curr_img]) + self.min[curr_img],
+                        xmax * (self.max[curr_img] - self.min[curr_img]) + self.min[curr_img]]
+                self.lines.append(
+                    self.axs_hist[0].plot(data, self.axs_hist[0].get_ylim(), 'k', linewidth='0.3', linestyle='dashed'))
             # Add colorbar if it existed
             if add_cb:
-                self.set_colorbar(colorbar = True)
+                self.set_colorbar(colorbar=True)
             # Get the correct x/ylims
             if self.data[curr_img].shape == self.data[curr_img - change].shape:
                 self.axs[0].set_xlim(old_axis[0])
@@ -1277,9 +1292,9 @@ class ImageViewer:
             # link new axis to callbacks (for zoom) and update stats to new image
             self.link_axs()
             self.update_stats()
-        
+
         # Manage disabling of buttons (Disable prev if it's the first fig, next if it's the last, else enable both)
-        if curr_img == self.number_images -1 :
+        if curr_img == self.number_images - 1:
             self.button_next.disabled = True
             self.button_prev.disabled = False
         elif curr_img == 0:
@@ -1288,9 +1303,9 @@ class ImageViewer:
         else:
             self.button_next.disabled = False
             self.button_prev.disabled = False
-        
-#         self.fig.tight_layout()
-    
+
+    #         self.fig.tight_layout()
+
     # In case of any transformation to the image, this function will update the information
     def update_histogram(self):
         """Auxiliary function to update the histograms.
@@ -1305,26 +1320,26 @@ class ImageViewer:
         # Iterate through each figure and get its histogram its histogram
         count = 0
         for i in range(self.number_images):
-            hist, bins = np.histogram(self.data[count], bins = 70, range = (self.min[count], self.max[count]))
+            hist, bins = np.histogram(self.data[count], bins=70, range=(self.min[count], self.max[count]))
             # Append info to our bins and hist attributes
             self.bins.append(bins)
             self.hist.append(hist)
             count += 1
-        
+
         # Attribute to store the lines 
         self.lines = []
         # Now, we iterate through the hist_axis's, and show the histogram, according to the use case. 
-        count = 0   
+        count = 0
         for i in range(self.number_images):
             # The first conditional is equal to the conditional when activating axis for the images
-#             print(i, len(self.axs), self.number_images - 1)
+            #             print(i, len(self.axs), self.number_images - 1)
             if i == len(self.axs) or i == self.number_images - 1:
                 if len(self.axs) < len(self.data):
                     break
                 else:
                     for j in range(i + 1, len(self.axs)):
                         self.axs_hist[j].axis('off')
-            
+
             # Display axes, only with the x-axis visible, and with corresponding title
             if self.current_image is not None:
                 count = self.current_image
@@ -1337,24 +1352,28 @@ class ImageViewer:
                 self.axs_hist[i].clear()
                 if self.max[count] != self.min[count]:
                     # Assigning this limit is to fully visualize the first bin, otherwise, half of the bin gets lost
-                    self.axs_hist[i].set_xlim(self.min[count] - 0.01  *(self.max[count] - self.min[count]), self.max[count])
+                    self.axs_hist[i].set_xlim(self.min[count] - 0.01 * (self.max[count] - self.min[count]),
+                                              self.max[count])
                 else:
                     # If there is only one value in the image, mpl adjusts automatically but throws warning that we want to hide
                     self.axs_hist[i].set_xlim(self.min[count] - 0.05, self.min[count] + 0.05)
-                self.axs_hist[i].set_ylim(0, 1.1*np.amax(self.hist[count]) + 0.05)
-                self.axs_hist[i].bar(self.bins[count][:-1], self.hist[count], width = (self.bins[count][1] - self.bins[count][0]) / 1.2)
-                self.lines.append(self.axs_hist[i].plot(self.axs_hist[i].get_xlim(), self.axs_hist[i].get_ylim(), 'k', linewidth = '0.3', linestyle = 'dashed'))
+                self.axs_hist[i].set_ylim(0, 1.1 * np.amax(self.hist[count]) + 0.05)
+                self.axs_hist[i].bar(self.bins[count][:-1], self.hist[count],
+                                     width=(self.bins[count][1] - self.bins[count][0]) / 1.2)
+                self.lines.append(self.axs_hist[i].plot(self.axs_hist[i].get_xlim(), self.axs_hist[i].get_ylim(), 'k',
+                                                        linewidth='0.3', linestyle='dashed'))
                 # Hide only y-axis ticks by default
-    #             self.axs_hist[i].axes.yaxis.set_visible(False)
+                #             self.axs_hist[i].axes.yaxis.set_visible(False)
                 self.axs_hist[i].set_yticks([])
                 self.axs_hist[i].set_title(self.titles[count])
                 self.axs_hist[i].set_ylabel('Count')
                 self.axs_hist[i].set_xlabel('Bin')
-            count +=1
-            
+            count += 1
+
         self.fig_hist.tight_layout()
-#         self.update_hist_lines()
-            
+
+    #         self.update_hist_lines()
+
     # Function that links all existing Axes to the Matplotlib callbacks, to act whenever axis limits change (e.i., when there is a zoom)
     def link_axs(self):
         """Function called when there is any change in the axis to store
@@ -1372,31 +1391,31 @@ class ImageViewer:
                 # In the case of single_image == True, stop at the first
                 if len(self.axs) == 1:
                     # Update xlim attribute
-                    self.xlim[i] = np.round(event_ax.get_xlim(),1)
+                    self.xlim[i] = np.round(event_ax.get_xlim(), 1)
                     break
                 # Check if joint zoom is on
                 if self.button_joint_zoom.description == 'Disable Joint Zoom':
-                    self.xlim[i] = np.round(event_ax.get_xlim(),1)
+                    self.xlim[i] = np.round(event_ax.get_xlim(), 1)
                 # Else look for the Axes which had the changes
                 elif event_ax == self.axs[i]:
                     # Once found, update xlimits
-                    self.xlim[i] = np.round(event_ax.get_xlim(),1)
-                
+                    self.xlim[i] = np.round(event_ax.get_xlim(), 1)
+
             self.update_stats()
-            
+
         def on_ylims_change(event_ax):
             for i in range(self.number_images):
                 if len(self.axs) == 1:
-                    self.ylim[i] = np.round(event_ax.get_ylim(),1)
+                    self.ylim[i] = np.round(event_ax.get_ylim(), 1)
                     break
                 if self.button_joint_zoom.description == 'Disable Joint Zoom':
-                    self.ylim[i] = np.round(event_ax.get_ylim(),1)
+                    self.ylim[i] = np.round(event_ax.get_ylim(), 1)
                 elif event_ax == self.axs[i]:
-                    self.ylim[i] = np.round(event_ax.get_ylim(),1)
-                
+                    self.ylim[i] = np.round(event_ax.get_ylim(), 1)
+
             self.update_stats()
-            
-        count = 0            
+
+        count = 0
         # Connect all Axes to the same handler (The handler we just defined takes care of identifying the Axes that changed)
         for ax in self.axs:
             if self.number_images == count:
@@ -1406,30 +1425,29 @@ class ImageViewer:
             ax.callbacks.connect('xlim_changed', on_xlims_change)
             ax.callbacks.connect('ylim_changed', on_ylims_change)
             count += 1
-        
-##########################################################     
-################# Utility Functions ######################
-##########################################################        
+
+    ##########################################################
+    ################# Utility Functions ######################
+    ##########################################################
 
     def get_histogram(self):
-        #Return histogram information, bins, hist and axes in list form
+        # Return histogram information, bins, hist and axes in list form
         return self.bins, self.hist
-    
-    def show_histogram(self, hist = False):        
+
+    def show_histogram(self, hist=False):
         if hist:
             self.out_fig.layout.width = '45%'
-#             self.hist_container = widgets.Output()
-#             self.final_view_hist = widgets.HBox([self.out_fig, self.hist_container, self.out])       #H layout
-#     #         self.final_view_hist = widgets.VBox([self.final_view_no_hist, self.hist_container])    # V layout
-#             display(self.final_view_hist)
+            #             self.hist_container = widgets.Output()
+            #             self.final_view_hist = widgets.HBox([self.out_fig, self.hist_container, self.out])       #H layout
+            #     #         self.final_view_hist = widgets.VBox([self.final_view_no_hist, self.hist_container])    # V layout
+            #             display(self.final_view_hist)
             with self.hist_container:
-                display(self.out_hist) # self.out_hist
+                display(self.out_hist)  # self.out_hist
         else:
             self.hist_container.clear_output()
             self.out_fig.layout.width = '80%'
 
-    
-    def set_widgets(self, widgets = True):
+    def set_widgets(self, widgets=True):
         if widgets:
             self.widgets = True
         else:
@@ -1437,29 +1455,30 @@ class ImageViewer:
             self.out.clear_output()
         self.button_showw.close()
         self.update_view()
-    
-    def set_axis(self, axis = False):
+
+    def set_axis(self, axis=False):
         count = 0
         # Iterate through the images
-        for ax in self.axs:  
+        for ax in self.axs:
             # check that we have images left to plot 
-            if count == len(self.data): 
+            if count == len(self.data):
                 break
             ax.axes.yaxis.set_visible(axis)
             ax.axes.xaxis.set_visible(axis)
             count += 1
-        
+
         count = 0
         # uncomment block to extrapolate behaviour to y-axis on histogram
-#         # Iterate through the histograms (Hide only y-axis) 
-#         for ax in self.axs_hist:  
-#             # check that we have images left to plot 
-#             if count == len(self.data): 
-#                 break
-#             ax.axes.yaxis.set_visible(axis)
-#             count += 1
-            
-    def set_colorbar(self, colorbar = True):
+
+    #         # Iterate through the histograms (Hide only y-axis)
+    #         for ax in self.axs_hist:
+    #             # check that we have images left to plot
+    #             if count == len(self.data):
+    #                 break
+    #             ax.axes.yaxis.set_visible(axis)
+    #             count += 1
+
+    def set_colorbar(self, colorbar=True):
         if colorbar:
             # Redefine attribute holding colorbars. Make sure we have an empty list to append our colorbars
             self.cb = []
@@ -1468,31 +1487,31 @@ class ImageViewer:
         count = 0
         for ax in self.axs:
             # check that we have images left to plot (in case subplots = [m, n], where m*m > num_images), if not, break           
-            if count == len(self.data): 
+            if count == len(self.data):
                 break
             if colorbar:
                 # If colorbar was requested, if so, show it
-                self.cb.append(self.fig.colorbar(self.im[count], ax = ax))
+                self.cb.append(self.fig.colorbar(self.im[count], ax=ax))
             else:
                 # If colorbar = False, check if there is an existing colorbar. If so, remove it.
                 if count < len(self.cb):
                     self.cb[count].remove()
             count += 1
-        
+
         # Now that we have removed the colorbars, empty the list, to get it ready for another call
         if not colorbar:
             self.cb = []
         # Call plt.draw to show colorbars
         plt.draw()
-            
-    def set_colormap(self, colormap = 'gray'):
+
+    def set_colormap(self, colormap='gray'):
         # If the user has called this function programatically, change cmap:
         self.dropdown_cmap.value = colormap
         # Iterate every AxesImage object in our attribute and set the colormap requested
         for im in self.im:
-            im.set_cmap(cmap = colormap)   
+            im.set_cmap(cmap=colormap)
 
-    def get_statistics(self, images = None):
+    def get_statistics(self, images=None):
         """Function to get extensive statistics about the displayed images
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
         Function that iterates through all the images in display, and gets
@@ -1524,9 +1543,10 @@ class ImageViewer:
             images = [images]
         # Check that requested image actually exists
         if np.max(images) >= self.number_images:
-            print('You only have {} image(s). Make your selection in the range 0-{}'.format(self.number_images, self.number_images - 1))
-            return       
-        # Iterate the requested images
+            print('You only have {} image(s). Make your selection in the range 0-{}'.format(self.number_images,
+                                                                                            self.number_images - 1))
+            return
+            # Iterate the requested images
         count = 0
         for i in images:
             if i == len(self.axs) and self.current_image is None:
@@ -1543,45 +1563,46 @@ class ImageViewer:
             xlim[count][0] += 0.5
             xlim[count][1] += 0.5
             ylim[count][0] += 0.5
-            ylim[count][1] += 0.5            
+            ylim[count][1] += 0.5
 
             # Get the information actually on display (self.data, and limits (zoom region) stored in self.x/ylims )
             plotted = self.data[i][int(ylim[count][1]):int(ylim[count][0]),
-                                           int(xlim[count][0]):int(xlim[count][1])]
+                      int(xlim[count][0]):int(xlim[count][1])]
             # Actually get statistics
             # If there is only one image being selected, range and shape do not keep the list form
-            if len(images) == 1:                
-                mean = float(np.round(plotted.mean(),2))                
-                std = float(np.round(plotted.std(),2))
-                min_value = np.round(np.amin(plotted),2)                        
-                max_value = np.round(np.amax(plotted),2)    
-                shape = self.original[i].shape                
+            if len(images) == 1:
+                mean = float(np.round(plotted.mean(), 2))
+                std = float(np.round(plotted.std(), 2))
+                min_value = np.round(np.amin(plotted), 2)
+                max_value = np.round(np.amax(plotted), 2)
+                shape = self.original[i].shape
                 rang = (min_value, max_value)
             else:
-                mean.append(np.round(plotted.mean(),2))
-                std.append(np.round(plotted.std(),2))
-                min_value.append(np.round(np.amin(plotted),2))                        
-                max_value.append(np.round(np.amax(plotted),2))    
+                mean.append(np.round(plotted.mean(), 2))
+                std.append(np.round(plotted.std(), 2))
+                min_value.append(np.round(np.amin(plotted), 2))
+                max_value.append(np.round(np.amax(plotted), 2))
                 shape.append(self.original[i].shape)
                 rang.append((min_value[count], max_value[count]))
-            count += 1     
-        # Prepare string
-        description = 'mean = {}\nstd_dev = {}\nrange = {}\nsize = {}'.format(np.round(mean, 2), np.round(std, 2), rang, shape)                
+            count += 1
+            # Prepare string
+        description = 'mean = {}\nstd_dev = {}\nrange = {}\nsize = {}'.format(np.round(mean, 2), np.round(std, 2), rang,
+                                                                              shape)
         return mean, std, min_value, max_value, shape, xlim, ylim, description
-    
-    def save(self, change):       
+
+    def save(self, change):
         if self.current_image is not None:
             viewer_screenshot = np.copy(self.data[self.current_image])
-            viewer_screenshot = viewer_screenshot[int(self.ylim[0][1]):int(self.ylim[0][0]), 
-                                                  int(self.xlim[0][0]):int(self.xlim[0][1])]
+            viewer_screenshot = viewer_screenshot[int(self.ylim[0][1]):int(self.ylim[0][0]),
+                                int(self.xlim[0][0]):int(self.xlim[0][1])]
         else:
             viewer_screenshot = []
             for i in range(len(self.axs)):
                 viewer_screenshot.append(np.copy(self.data[i]))
-                viewer_screenshot[i] = viewer_screenshot[int(self.ylim[i][1]):int(self.ylim[i][0]), 
-                                                         int(self.xlim[i][0]):int(self.xlim[i][1])]                
+                viewer_screenshot[i] = viewer_screenshot[int(self.ylim[i][1]):int(self.ylim[i][0]),
+                                       int(self.xlim[i][0]):int(self.xlim[i][1])]
         return viewer_screenshot
-      
+
     def retrieve_name(self, var):
         """Function to retrieve the name of a variable in str form
         """
