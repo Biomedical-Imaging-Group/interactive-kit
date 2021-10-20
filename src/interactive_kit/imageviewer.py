@@ -881,7 +881,7 @@ class ImageViewer:
         
         # Get all parameters of the object to initial values    
         self.slider_clim.value = [0, 100]
-        self.view == 'initial'
+        self.view = 'initial'
         self.dropdown_cmap.value = self.cmap_orig                     
         # Get images back to the originals (In case any function/ transformation has been applied)
         for i in range(self.number_images):

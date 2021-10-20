@@ -315,7 +315,8 @@ class SignalViewer:
             self.next_prev_buttons = widgets.HBox([self.button_prev, self.button_next])
         
         self.style = kwargs.get('style', 'stem')
-        if self.style not in ['stem', 'line', 'dot']: style == 'stem'
+        if self.style not in ['stem', 'line', 'dot']:
+            self.style = 'stem'
         self.dropdown_style = widgets.Dropdown(options = ['stem', 'line', 'dot'], 
                                               value = self.style, 
                                               disabled = False, 
