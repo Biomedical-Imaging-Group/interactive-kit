@@ -30,7 +30,7 @@ class SignalViewer():
     
         ## Constructor, only mandatory argument is an image
     def __init__(self, signal_list, **kwargs):
-        '''Initialization funcion of SignalViewer. 
+        """Initialization funcion of SignalViewer.
 
         The only required argument is a signal (1D NumPy array) or a list of 
         signals. If the signals are not NumPy arrays, a TypeError will
@@ -105,8 +105,8 @@ class SignalViewer():
         widgets : boolean
             Display the widget menu. If not specified (or set to False),
             only the button *Show Wisgets* will be displayed.
-            
-        '''
+
+        """
 
         # Get timestamp
         import time
@@ -339,26 +339,26 @@ class SignalViewer():
     ##############################################################################################
     
     def style_callback(self, change):
-        '''Callback of cmap menu, to change the colormap to the selected one. 
-        '''
+        """Callback of cmap menu, to change the colormap to the selected one.
+        """
         # Set the colormap of the images
         self.set_style(style = change.new)
         
     def prev_button_callback(self, change):
-        '''Callback of *Prev* button, to browse to the previous image. 
-        
+        """Callback of *Prev* button, to browse to the previous image.
+
         It is only active when there are several images, and the display mode
         is single image. When there is no previous image, it is disabled.
-        '''
+        """
         # Change image to one before the currently plotted 
         self.change_signal(-1)
         
     def next_button_callback(self, change):
-        '''Callback of *Next* button, to browse to the previous image. 
-        
+        """Callback of *Next* button, to browse to the previous image.
+
         It is only active when there are several images, and the display mode
         is single image. When there is no further image, it is disabled.
-        '''
+        """
         # Change image to one after the currently plotted
         self.change_signal(1)
         
@@ -391,20 +391,20 @@ class SignalViewer():
             count += 1
             
     def clear_axs(self):
-        '''Auxiliary function to clear all axs
-        '''
+        """Auxiliary function to clear all axs
+        """
         for ax in self.axs:
             ax.clear()
             
     def link_axs(self):
-        '''Function called when there is any change in the axis to store
+        """Function called when there is any change in the axis to store
 
         This function is called when a displayed signal changes, when there 
         is a zoom event, or any event to changes the axis. If the 
         functionality *Joint Zoom* is activated, it updates the axis of the 
         rest of the images also. Moreover, it updates the statistics, to 
         get the information from the image currently in display.
-        '''
+        """
 
         def on_xlims_change(event_ax):
             # Iterate through all the images
@@ -447,14 +447,14 @@ class SignalViewer():
             count += 1
             
     def change_signal(self, change = 0):
-        '''Called by the buttons *Prev*/*Next* to browse through the images.
+        """Called by the buttons *Prev*/*Next* to browse through the images.
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
         This image takes care of changing the images, and updating the 
         information associated with the image (statistics, histogram, 
         colorbar, axis). If the previously displayed image had the same 
         dimensions as the new one, and it was zoomed to a region, it keeps 
         the zoomed area. Otherwise, it also resets the zoom
-        '''
+        """
         # Restore self.im (attribute that holds AxesImage objects)
         self.im = []
         # If image in display is to be changed (change = 1, -1, 2, ...), check that there is another image to go to. Otherwise, do nothing
@@ -523,9 +523,9 @@ class SignalViewer():
             self.button_prev.disabled = False
 
         
-    def retrieve_name(self, var): 
-        '''Auxiliary function to retrieve the name of a variable in str form
-        '''
+    def retrieve_name(self, var):
+        """Auxiliary function to retrieve the name of a variable in str form
+        """
         for fi in reversed(inspect.stack()):
             names = [var_name for var_name, var_val in fi.frame.f_locals.items() if var_val is var]
             if len(names) > 0:

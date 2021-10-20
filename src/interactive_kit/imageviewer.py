@@ -727,7 +727,7 @@ class ImageViewer():
 ##########################################################################
 
     def clim_callback(self, change):
-        '''Callback of `slider_clim`. 
+        """Callback of `slider_clim`.
 
         Adjusts the the color limits of the displayed images, and updates 
         the histogram line. See matplitlib's AxesImage method `set_clim`
@@ -739,7 +739,7 @@ class ImageViewer():
             Parameter sent when an ipywidget is linked to a callback. Contains
             information on the widget and on the new and old values. See 
             iPyWidgets documentation for details.
-        '''
+        """
         count = 0
         # Iterate through each AxesImage and apply new clim
         for im in self.im: 
@@ -753,12 +753,12 @@ class ImageViewer():
     
     ## Button Callbacks 
     def joint_zoom_callback(self, change=None):
-        '''Callback of button *Enable Joint Zoom*. 
+        """Callback of button *Enable Joint Zoom*.
 
         When the zoom joint is enabled (the description of the button will)
         tell, zooming to an area on an image will zoom into the same area in
         all images. Useful for image comparison features.
-        '''
+        """
         if self.button_joint_zoom.description == 'Enable Joint Zoom':
             self.button_joint_zoom.description = 'Disable Joint Zoom'
             # Share axes for joint zooming
@@ -775,8 +775,8 @@ class ImageViewer():
                 [g.remove(a) for a in g.get_siblings(self.axs[i])]
     
     def hist_button_click(self, change):
-        '''Callback of button *Show Hist*, to show or hide the histogram 
-        '''
+        """Callback of button *Show Hist*, to show or hide the histogram
+        """
         # Check the current state, change, and act accordingly
         if self.button_hist.description == 'Show Histogram':           
             self.button_hist.description = 'Close Histogram' 
@@ -786,18 +786,18 @@ class ImageViewer():
             self.show_histogram(hist = False)
         
     def options_button(self, change):
-        '''Callback of button *Options*, to switch to options menu 
-        '''
+        """Callback of button *Options*, to switch to options menu
+        """
         self.view = 'options'
         self.update_view()
         
     def compare_button(self, change):
-        '''Callback of button *Compare*. 
+        """Callback of button *Compare*.
 
         It is active when exactly 2 images are given. When clicked, the 
         difference between the two images will be calculated, and drawn in
-        red on top of the images. Works for both single and multiple display modes. 
-        '''
+        red on top of the images. Works for both single and multiple display modes.
+        """
         # Ensure that we only have to images (otherwise the button should not be there anyway)
         if self.number_images != 2:
             return
@@ -839,26 +839,26 @@ class ImageViewer():
                 self.axs[0].imshow(self.error)
 
     def back_button_callback(self, change):
-        '''Callback of button *Back*, to switch to main menu 
-        '''
+        """Callback of button *Back*, to switch to main menu
+        """
         self.view = 'initial'
         self.update_view()
         
     def x_w_button_callback(self, change):
-        '''Callback of button *Extra Widgets*, to go to Extra Widgets menu
-        
+        """Callback of button *Extra Widgets*, to go to Extra Widgets menu
+
         It is only active when the parameters `new_widgets` and `callbacks`
         were given to the __init__ function.
-        '''
+        """
         self.view = 'x_widget'
         self.update_view()
             
     def reset_clickables(self):
-        '''Button to reset information on clickables.
-        
+        """Button to reset information on clickables.
+
         It is only active when the parameter `clickable` is set to `True`
         during initialization.
-        '''
+        """
         # Reset clickable parameters
         self.click_count = 0
         self.mouse_coords = []
@@ -868,13 +868,13 @@ class ImageViewer():
                 self.axs[i].lines[0].remove()
     
     def reset(self, change):
-        '''Button to reset the state of the viewer
-        
+        """Button to reset the state of the viewer
+
         The viewer is brought back to the state in which it was instantiated
         (except for the widgets menu, which will always stay there). This
         applies for transforms transform, color scaling, zooming, axis, 
         colorbar, etc.
-        '''
+        """
         if self.clickable:
             self.reset_clickables()
             self.block_clicks = False
@@ -927,14 +927,14 @@ class ImageViewer():
         self.update_hist_lines()
     
     def showw_button_callback(self, change):
-        '''Callback of button *Back*, to show main menu. 
-        '''
+        """Callback of button *Back*, to show main menu.
+        """
         # Set widgets on request
         self.set_widgets()
     
     def axis_button_click(self, change):
-        '''Callback of button *Show/Hide Axis*, to show/hide the image axis. 
-        '''
+        """Callback of button *Show/Hide Axis*, to show/hide the image axis.
+        """
         # Set Axes and change description of button accordingly
         if self.button_show_axis.description == 'Show Axis':
             self.button_show_axis.description = 'Hide Axis'
@@ -944,8 +944,8 @@ class ImageViewer():
             self.set_axis(axis = False)
             
     def colorbar_button_click(self, change):
-        '''Callback of button *Set/Hide Colorbar*, to show/hide the colorbar. 
-        '''
+        """Callback of button *Set/Hide Colorbar*, to show/hide the colorbar.
+        """
         # Set colorbar and change description of button accordingly
         if self.button_colorbar.description == 'Set Colorbar':
             self.button_colorbar.description = 'Hide Colorbar'
@@ -955,39 +955,39 @@ class ImageViewer():
             self.set_colorbar(colorbar = False)
     
     def cmap_callback(self, change):
-        '''Callback of cmap menu, to change the colormap to the selected one. 
-        '''
+        """Callback of cmap menu, to change the colormap to the selected one.
+        """
         # Set the colormap of the images
         self.set_colormap(colormap = change.new)
         
     def prev_button_callback(self, change):
-        '''Callback of *Prev* button, to browse to the previous image. 
-        
+        """Callback of *Prev* button, to browse to the previous image.
+
         It is only active when there are several images, and the display mode
         is single image. When there is no previous image, it is disabled.
-        '''
+        """
         # Change image to one before the currently plotted 
         self.change_image(-1)
         
     def next_button_callback(self, change):
-        '''Callback of *Next* button, to browse to the previous image. 
-        
+        """Callback of *Next* button, to browse to the previous image.
+
         It is only active when there are several images, and the display mode
         is single image. When there is no further image, it is disabled.
-        '''
+        """
         # Change image to one after the currently plotted
         self.change_image(1)
 
     # Callback used when user declares an extra widget
     def x_w_callback(self, change):
-        '''Callback of user defined transforms button, to apply transform(s) 
-        
-        It is only active when the parameters `new_widgets` and `callbacks` 
-        are included in the initialization. If there is only one callback, 
-        it applies that callback to all the images in the ImageViewer. If 
+        """Callback of user defined transforms button, to apply transform(s)
+
+        It is only active when the parameters `new_widgets` and `callbacks`
+        are included in the initialization. If there is only one callback,
+        it applies that callback to all the images in the ImageViewer. If
         there is one callback per image, then it applies the corresponding
         callback to each image.
-        '''
+        """
         # Accept both lists and np arrays
         self.usr_defined_callbacks = np.array(self.usr_defined_callbacks)
         # First, we check wether there is one or several callbacks
@@ -1048,12 +1048,12 @@ class ImageViewer():
 ########################################################## 
                 
     def update_stats(self, clicks = ""):
-        '''Function to update the satatistics on the images in display. 
-        
-        It is called in almost any event of the ImageViewer (zooming, 
+        """Function to update the satatistics on the images in display.
+
+        It is called in almost any event of the ImageViewer (zooming,
         changing image, aplying a transform, changing the colorlimit),
         and always reflects the statistics of the images in display.
-        '''
+        """
 
         # Get statistics
         _, _, _, _, _, _, _, descriptive_string = self.get_statistics()       
@@ -1061,13 +1061,13 @@ class ImageViewer():
         self.stats_text.value = descriptive_string + clicks
 
     def onclick(self,event):
-        '''Function to process clicking events on the images
-        
-        It is only called if ImageViewer was instantiated with the parameter 
-        clickable = `True`. This function gets the information of where an 
-        Image has been clicked, and then stores it in `self.mouse_coords`. 
-        This values can later be accessed by a transform or function. 
-        '''
+        """Function to process clicking events on the images
+
+        It is only called if ImageViewer was instantiated with the parameter
+        clickable = `True`. This function gets the information of where an
+        Image has been clicked, and then stores it in `self.mouse_coords`.
+        This values can later be accessed by a transform or function.
+        """
         if not self.block_clicks:
             # need only for points for mapping
             if (not self.line):
@@ -1105,12 +1105,12 @@ class ImageViewer():
                 return
 
     def draw_line(self):
-        '''Auxiliary function called by `onclick` to draw lines between points
+        """Auxiliary function called by `onclick` to draw lines between points
 
         If ImageViewerDraws is instantiated with the parameters `lines` and
-        `clickable` set to `True`, then this function draws lines between 
-        points that have been selected by the user. 
-        '''
+        `clickable` set to `True`, then this function draws lines between
+        points that have been selected by the user.
+        """
         x = [p['x'] for p in self.mouse_coords]
         y = [p['y'] for p in self.mouse_coords]
 
@@ -1124,21 +1124,21 @@ class ImageViewer():
 
 
     def draw_point(self,index):
-        '''Auxiliary function to draw points when a user clicks, if clickable mode.
-        '''
+        """Auxiliary function to draw points when a user clicks, if clickable mode.
+        """
         color = ['ro','bo']
         x = [p['x'] for i,p in enumerate(self.mouse_coords) if i %2 ==index]
         y = [p['y'] for i,p in enumerate(self.mouse_coords) if i %2 ==index]
         self.axs[index].plot(x,y,color[index])
         self.fig.canvas.draw()
         
-    def update_hist_lines(self): 
-        '''Function to reflect changes of brightness and contrast on the histogram
+    def update_hist_lines(self):
+        """Function to reflect changes of brightness and contrast on the histogram
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
         Every time the b&c slider is called (to adjust the colorscaling on 
         the images) This function is called to adjust the diagonal line on 
         the histogram to reflect this changes.
-        '''
+        """
         count = 0
         # Get range
         xmin = self.slider_clim.value[0]*0.01
@@ -1167,8 +1167,8 @@ class ImageViewer():
 #         plt.draw()
                    
     def update_view(self):
-        '''Function that updates the widget menu as requested by a user. 
-        '''
+        """Function that updates the widget menu as requested by a user.
+        """
         # Note that all the widgets are held by self.out. First we check if widgets are required, and which menu is to be displayed
         if self.widgets == True:
             if self.view == 'initial':
@@ -1192,14 +1192,14 @@ class ImageViewer():
     
     # Function to be used if single_image = True, by buttons prev and next
     def change_image(self, change = 0):
-        '''Called by the buttons *Prev*/*Next* to browse through the images.
+        """Called by the buttons *Prev*/*Next* to browse through the images.
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
         This image takes care of changing the images, and updating the 
         information associated with the image (statistics, histogram, 
         colorbar, axis). If the previously displayed image had the same 
         dimensions as the new one, and it was zoomed to a region, it keeps 
         the zoomed area. Otherwise, it also resets the zoom
-        '''
+        """
         # Restore self.im (attribute that holds AxesImage objects)
         self.im = []
         # If image in display is to be changed (change = 1, -1, 2, ...), check that there is another image to go to. Otherwise, do nothing
@@ -1293,12 +1293,12 @@ class ImageViewer():
     
     # In case of any transformation to the image, this function will update the information
     def update_histogram(self):
-        '''Auxiliary function to update the histograms.
+        """Auxiliary function to update the histograms.
 
         This function is called by `__init__`, `change_image`, `x_w_callback`
         and any function that modifies the current display. It takes ensures
-        that the histogram in display matches the image. 
-        '''
+        that the histogram in display matches the image.
+        """
         # Initialize arrays to hold hist and bins
         self.hist = []
         self.bins = []
@@ -1357,14 +1357,14 @@ class ImageViewer():
             
     # Function that links all existing Axes to the Matplotlib callbacks, to act whenever axis limits change (e.i., when there is a zoom)
     def link_axs(self):
-        '''Function called when there is any change in the axis to store
+        """Function called when there is any change in the axis to store
 
         This function is called when an image changes, when there is a zoom 
         event, or any event to changes the axis. If the functionality *Joint
         Zoom* is activated, it updates the axis of the rest of the images 
         also. Moreover, it updates the statistics, to get the information 
         from the image currently in display.
-        '''
+        """
 
         def on_xlims_change(event_ax):
             # Iterate through all the images
@@ -1493,7 +1493,7 @@ class ImageViewer():
             im.set_cmap(cmap = colormap)   
 
     def get_statistics(self, images = None):
-        '''Function to get extensive statistics about the displayed images
+        """Function to get extensive statistics about the displayed images
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
         Function that iterates through all the images in display, and gets 
         information ony about the current region in display. It firsts 
@@ -1501,7 +1501,7 @@ class ImageViewer():
         minimum and maximum values, shape, and display limits. It returns 
         this information in list form, plus a descriptive string used to 
         display the information in the viewer.
-        '''
+        """
         # Initialize lists to hold information
         mean = []
         std = []
@@ -1582,9 +1582,9 @@ class ImageViewer():
                                                          int(self.xlim[i][0]):int(self.xlim[i][1])]                
         return viewer_screenshot
       
-    def retrieve_name(self, var): 
-        '''Function to retrieve the name of a variable in str form
-        '''
+    def retrieve_name(self, var):
+        """Function to retrieve the name of a variable in str form
+        """
         for fi in reversed(inspect.stack()):
             names = [var_name for var_name, var_val in fi.frame.f_locals.items() if var_val is var]
             if len(names) > 0:
