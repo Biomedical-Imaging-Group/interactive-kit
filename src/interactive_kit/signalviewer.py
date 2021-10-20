@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.lines as lines
 import ipywidgets as widgets
+from IPython.display import display
 # To stringify variables
 import inspect
 # To get user ID 

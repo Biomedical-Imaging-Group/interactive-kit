@@ -7,6 +7,7 @@ import cv2 as cv # TODO: eliminate
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 from matplotlib import backend_bases
+from IPython.display import display
 import numpy as np
 
 # Configure Matplotlib buttons - Uncomment lines to get back to baseline 
