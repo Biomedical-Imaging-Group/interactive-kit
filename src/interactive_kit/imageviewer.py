@@ -24,7 +24,7 @@ backend_bases.NavigationToolbar2.toolitems = (
 )
 
 # Begin the class 
-class ImageViewer():
+class ImageViewer:
     """Class for interactive visualization of image processing on Jupyter Notebooks.
 
     The `ImageViewer` class allows you to quickly visualize an image and interact with its properties. You can easily
@@ -688,7 +688,7 @@ class ImageViewer():
             self.widgets = False
             display(self.button_showw)
         # Show axis only on request, or if pixel_grid was requested
-        if (kwargs.get('axis', False) or self.pixel_grid):
+        if kwargs.get('axis', False) or self.pixel_grid:
             self.button_show_axis.description = 'Hide Axis'
             self.set_axis(axis = True)
         else:
@@ -729,15 +729,15 @@ class ImageViewer():
     def clim_callback(self, change):
         """Callback of `slider_clim`.
 
-        Adjusts the the color limits of the displayed images, and updates 
+        Adjusts the the color limits of the displayed images, and updates
         the histogram line. See matplitlib's AxesImage method `set_clim`
         for more details.
-        
+
         Parameters
         ----------
         change : dict
             Parameter sent when an ipywidget is linked to a callback. Contains
-            information on the widget and on the new and old values. See 
+            information on the widget and on the new and old values. See
             iPyWidgets documentation for details.
         """
         count = 0
@@ -769,9 +769,9 @@ class ImageViewer():
             self.button_joint_zoom.description = 'Enable Joint Zoom'
             # Unshare axes for individual zooming
             for i in range(len(self.axs)):
-                g = self.axs[i].get_shared_x_axes();  
+                g = self.axs[i].get_shared_x_axes()
                 [g.remove(a) for a in g.get_siblings(self.axs[i])]
-                g = self.axs[i].get_shared_y_axes();  
+                g = self.axs[i].get_shared_y_axes()
                 [g.remove(a) for a in g.get_siblings(self.axs[i])]
     
     def hist_button_click(self, change):
@@ -794,7 +794,7 @@ class ImageViewer():
     def compare_button(self, change):
         """Callback of button *Compare*.
 
-        It is active when exactly 2 images are given. When clicked, the 
+        It is active when exactly 2 images are given. When clicked, the
         difference between the two images will be calculated, and drawn in
         red on top of the images. Works for both single and multiple display modes.
         """
@@ -807,19 +807,19 @@ class ImageViewer():
             diff = np.abs(self.original[1] - self.original[0])
             # Normalize if necessary
             if (diff.max() - diff.min()) != 0:
-                diff = (diff - diff.min()) / (diff.max() - diff.min());
+                diff = (diff - diff.min()) / (diff.max() - diff.min())
             self.error = np.dstack((np.ones_like(self.original[0]), np.zeros_like(self.original[0]), np.zeros_like(self.original[0]), diff))  
 
         elif all(c == 3 for c in self.channels):
             diff_r = np.abs(self.original[1][:, :, 0] - self.original[0][:, :, 0])
             if (diff_r.max() - diff_r.min()) != 0:
-                diff_r = (diff_r - diff_r.min()) / (diff_r.max() - diff_r.min());
+                diff_r = (diff_r - diff_r.min()) / (diff_r.max() - diff_r.min())
             diff_g = np.abs(self.original[1][:, :, 1] - self.original[0][:, :, 1])
             if (diff_g.max() - diff_g.min()) != 0:
-                diff_g = (diff_g - diff_g.min()) / (diff_g.max() - diff_g.min());
+                diff_g = (diff_g - diff_g.min()) / (diff_g.max() - diff_g.min())
             diff_b = np.abs(self.original[1][:, :, 2] - self.original[0][:, :, 2])
             if (diff_b.max() - diff_b.min()) != 0:
-                diff_b = (diff_b - diff_b.min()) / (diff_b.max() - diff_b.min());
+                diff_b = (diff_b - diff_b.min()) / (diff_b.max() - diff_b.min())
             self.error = np.dstack((diff_r, diff_g, diff_b))
             
         if self.current_image == None:
@@ -872,7 +872,7 @@ class ImageViewer():
 
         The viewer is brought back to the state in which it was instantiated
         (except for the widgets menu, which will always stay there). This
-        applies for transforms transform, color scaling, zooming, axis, 
+        applies for transforms transform, color scaling, zooming, axis,
         colorbar, etc.
         """
         if self.clickable:
@@ -1007,11 +1007,11 @@ class ImageViewer():
             if multi_callback:
                 self.data[i] = self.usr_defined_callbacks[i](self.data[i])
             else:
-                if (not self.clickable ):
+                if not self.clickable:
                     self.data[i] = self.usr_defined_callbacks[0](self.data[i])
                 else:
                     # If clickable, add mouse coords to the callback function
-                    if(i==0):
+                    if i==0:
                         if self.line:
                             self.data[0] = self.usr_defined_callbacks[0](self.data[0], self.mouse_coords)
                         else:
@@ -1070,10 +1070,10 @@ class ImageViewer():
         """
         if not self.block_clicks:
             # need only for points for mapping
-            if (not self.line):
+            if not self.line:
                 index=len(self.mouse_coords)%2
                 # check that user in on the right subplot
-                if (event.inaxes == self.axs[index]):
+                if event.inaxes == self.axs[index]:
                     if len(self.mouse_coords) < 4:
                         # increment click count upon new entry
                         self.click_count +=1
@@ -1135,8 +1135,8 @@ class ImageViewer():
     def update_hist_lines(self):
         """Function to reflect changes of brightness and contrast on the histogram
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
-        Every time the b&c slider is called (to adjust the colorscaling on 
-        the images) This function is called to adjust the diagonal line on 
+        Every time the b&c slider is called (to adjust the colorscaling on
+        the images) This function is called to adjust the diagonal line on
         the histogram to reflect this changes.
         """
         count = 0
@@ -1170,7 +1170,7 @@ class ImageViewer():
         """Function that updates the widget menu as requested by a user.
         """
         # Note that all the widgets are held by self.out. First we check if widgets are required, and which menu is to be displayed
-        if self.widgets == True:
+        if self.widgets:
             if self.view == 'initial':
                 # Once we are in the view, we first clear the output of self.out
                 self.out.clear_output()
@@ -1194,10 +1194,10 @@ class ImageViewer():
     def change_image(self, change = 0):
         """Called by the buttons *Prev*/*Next* to browse through the images.
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
-        This image takes care of changing the images, and updating the 
-        information associated with the image (statistics, histogram, 
-        colorbar, axis). If the previously displayed image had the same 
-        dimensions as the new one, and it was zoomed to a region, it keeps 
+        This image takes care of changing the images, and updating the
+        information associated with the image (statistics, histogram,
+        colorbar, axis). If the previously displayed image had the same
+        dimensions as the new one, and it was zoomed to a region, it keeps
         the zoomed area. Otherwise, it also resets the zoom
         """
         # Restore self.im (attribute that holds AxesImage objects)
@@ -1359,10 +1359,10 @@ class ImageViewer():
     def link_axs(self):
         """Function called when there is any change in the axis to store
 
-        This function is called when an image changes, when there is a zoom 
+        This function is called when an image changes, when there is a zoom
         event, or any event to changes the axis. If the functionality *Joint
-        Zoom* is activated, it updates the axis of the rest of the images 
-        also. Moreover, it updates the statistics, to get the information 
+        Zoom* is activated, it updates the axis of the rest of the images
+        also. Moreover, it updates the statistics, to get the information
         from the image currently in display.
         """
 
@@ -1413,7 +1413,7 @@ class ImageViewer():
 
     def get_histogram(self):
         #Return histogram information, bins, hist and axes in list form
-        return(self.bins, self.hist)
+        return self.bins, self.hist
     
     def show_histogram(self, hist = False):        
         if hist:
@@ -1480,7 +1480,7 @@ class ImageViewer():
             count += 1
         
         # Now that we have removed the colorbars, empty the list, to get it ready for another call
-        if not(colorbar):
+        if not colorbar:
             self.cb = []
         # Call plt.draw to show colorbars
         plt.draw()
@@ -1495,11 +1495,11 @@ class ImageViewer():
     def get_statistics(self, images = None):
         """Function to get extensive statistics about the displayed images
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
-        Function that iterates through all the images in display, and gets 
-        information ony about the current region in display. It firsts 
+        Function that iterates through all the images in display, and gets
+        information ony about the current region in display. It firsts
         extracts the region, and calculates the mean and standard deviation,
-        minimum and maximum values, shape, and display limits. It returns 
-        this information in list form, plus a descriptive string used to 
+        minimum and maximum values, shape, and display limits. It returns
+        this information in list form, plus a descriptive string used to
         display the information in the viewer.
         """
         # Initialize lists to hold information
@@ -1567,7 +1567,7 @@ class ImageViewer():
             count += 1     
         # Prepare string
         description = 'mean = {}\nstd_dev = {}\nrange = {}\nsize = {}'.format(np.round(mean, 2), np.round(std, 2), rang, shape)                
-        return(mean, std, min_value, max_value, shape, xlim, ylim, description)
+        return mean, std, min_value, max_value, shape, xlim, ylim, description
     
     def save(self, change):       
         if self.current_image != None:

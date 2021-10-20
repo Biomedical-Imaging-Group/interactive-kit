@@ -26,82 +26,82 @@ backend_bases.NavigationToolbar2.toolitems = (
 
 
 # Now we actually begin the class
-class SignalViewer():
+class SignalViewer:
     
         ## Constructor, only mandatory argument is an image
     def __init__(self, signal_list, **kwargs):
         """Initialization funcion of SignalViewer.
 
-        The only required argument is a signal (1D NumPy array) or a list of 
+        The only required argument is a signal (1D NumPy array) or a list of
         signals. If the signals are not NumPy arrays, a TypeError will
-        be raised. All the rest of the parameters are optional         
-        
+        be raised. All the rest of the parameters are optional
+
         Parameters
         ----------
         signal : NumPy array or iterable of NumPy arrays
             The image or images to visualize
-            
-        bode : boolean 
+
+        bode : boolean
             Whether to show the bode diagram from the beginning or not
-            
+
         callbacks :  list
             The list should have either $1$ element or the same number of
             elements as there are signals. In the former case, the same
             callback will be applied to all signals. In the latter, the n-th
             callback of the list will be applied to the n-th signal. All
-            callbacks should have as sole input and output parameters an 
+            callbacks should have as sole input and output parameters an
             image. All other required parameters should taken from widgets
-            values (see parameter `new_widgets`).  
-            
+            values (see parameter `new_widgets`).
+
         clip_range : iterable of two floats
-            Indicates the min and max values that will be enforced on 
-            all images. Images with values outside this range will be 
+            Indicates the min and max values that will be enforced on
+            all images. Images with values outside this range will be
             clipped to the range, as in `numpy.clip`.
-            
+
         compare : boolean
-            Whether to activate the image comparison functionality. 
+            Whether to activate the image comparison functionality.
             Defaults to `False`. It only has an effect when `ImageViewer`
-            is initialized with two images. Regions of the two images 
+            is initialized with two images. Regions of the two images
             where there are differences will be shown in red.
 
         grid : boolean
             Whether to plot with a grid or not
-            
+
         joint_zoom : boolean
-            Whether to activate or not the joint zoom functionality from 
-            the initialization. When it is activated, zooming to an area 
+            Whether to activate or not the joint zoom functionality from
+            the initialization. When it is activated, zooming to an area
             in an image will make the rest of the images zoom to the same
             area. It only has an effect when there is an image grid. It can
             be (de)activated also through the widgets menu.
-            
+
         new_widgets : list of ipywidgets objects
             It is meant to be used jointly with the parameter `callbacks`.
             If a callback depends on tunable parameters, this should be set
-            by ipywidgets sliders/dropdown menus, which need to be passed 
-            to `ImageViewer` through this parameter. The last element in the 
-            list should always be an `ipywidgets.Button`, that will serve to 
+            by ipywidgets sliders/dropdown menus, which need to be passed
+            to `ImageViewer` through this parameter. The last element in the
+            list should always be an `ipywidgets.Button`, that will serve to
             apply any transform.
-            
+
         normalize : boolean
             Whether to scale the values of all signals to the range $[0, 1]$.
             Defaults to False
 
         scale_range : iterable of 2 floats
             If given, all signals will be rescaled to the specified range.
-            
+
         style : string {'stem', 'line', 'dot'}
             A string that determines the plotting style of the signal.
             Defaults to 'stem'.
-            
+
         subplots :  iterable of 2 ints
             Specify a grid for the signals (see Matplitlib gridspec). If there
-            are more signals than spaces in the grid, the rest of the signals 
+            are more signals than spaces in the grid, the rest of the signals
             will not be shown.
-        
+
         title : list of strings
-            Specifies the title of every signal. If not given, the name of the 
+            Specifies the title of every signal. If not given, the name of the
             variable will be used as title.
-        
+
         widgets : boolean
             Display the widget menu. If not specified (or set to False),
             only the button *Show Wisgets* will be displayed.
@@ -375,7 +375,7 @@ class SignalViewer():
             # axes_subplot is to choose whether to plot everything on the same AxesSubplot object
             if self.all_in_one_subplot or self.current_signal != None: 
                 axs_idx = 0
-            elif not(self.all_in_one_subplot) and self.current_signal == None :
+            elif not self.all_in_one_subplot and self.current_signal == None :
                 axs_idx = i
             if self.current_signal != None and i > 0: break
             if self.current_signal != None:
@@ -399,10 +399,10 @@ class SignalViewer():
     def link_axs(self):
         """Function called when there is any change in the axis to store
 
-        This function is called when a displayed signal changes, when there 
-        is a zoom event, or any event to changes the axis. If the 
-        functionality *Joint Zoom* is activated, it updates the axis of the 
-        rest of the images also. Moreover, it updates the statistics, to 
+        This function is called when a displayed signal changes, when there
+        is a zoom event, or any event to changes the axis. If the
+        functionality *Joint Zoom* is activated, it updates the axis of the
+        rest of the images also. Moreover, it updates the statistics, to
         get the information from the image currently in display.
         """
 
@@ -449,10 +449,10 @@ class SignalViewer():
     def change_signal(self, change = 0):
         """Called by the buttons *Prev*/*Next* to browse through the images.
 0123456789112345678921234567893123456789412345678951234567896123456789712345 67898123456789
-        This image takes care of changing the images, and updating the 
-        information associated with the image (statistics, histogram, 
-        colorbar, axis). If the previously displayed image had the same 
-        dimensions as the new one, and it was zoomed to a region, it keeps 
+        This image takes care of changing the images, and updating the
+        information associated with the image (statistics, histogram,
+        colorbar, axis). If the previously displayed image had the same
+        dimensions as the new one, and it was zoomed to a region, it keeps
         the zoomed area. Otherwise, it also resets the zoom
         """
         # Restore self.im (attribute that holds AxesImage objects)
