@@ -556,10 +556,9 @@ class ImageViewer:
             self.extra_widgets = True
             # Get new widgets and callback as attributes
             self.usr_defined_widgets = kwargs.get('new_widgets')
-            try:
-                self.usr_defined_callbacks = kwargs.get('callbacks')
-            except Error: 
-                print('Please provide your widgets in a list (with the button as the last element), and the callback to your button \
+            self.usr_defined_callbacks = kwargs.get('callbacks', None)
+            if self.usr_defined_callbacks is None:
+                raise TypeError('Please provide your widgets in a list (with the button as the last element), and the callback to your button \
                         also as a list in the parameter callbacks.')
             # Create button , and menu, to display the additional widget
             self.button_show_x_w = widgets.Button(description = 'Extra Widgets')
