@@ -62,4 +62,13 @@ html_static_path = ['_static']
 #     'numpydoc',
 # ]
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.coverage', 'numpydoc']
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.coverage',
+#               'sphinx.ext.autosummary',
+              'numpydoc']
+
+autodoc_default_options = {
+    'member-order': 'bysource',
+#     'special-members': '__init__',
+#     'undoc-members': True,
+}
