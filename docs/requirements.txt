@@ -40,7 +40,6 @@ grpcio==1.37.0
 hdfs==2.6.0
 httplib2==0.17.4
 idna==2.10
-image-viewer-kit-TEST==0.5
 imageio==2.8.0
 imagesize==1.2.0
 import-ipynb==0.1.3
