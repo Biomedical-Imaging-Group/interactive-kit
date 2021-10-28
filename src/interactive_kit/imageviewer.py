@@ -1210,7 +1210,7 @@ class ImageViewer:
             self.hist_container.clear_output()
 
     # Function to be used if single_image = True, by buttons prev and next
-    def change_image(self, change = 0):
+    def change_image(self, change=0):
         """Called by the buttons *Prev*/*Next* to browse through the images.
 
         This image takes care of changing the images, and updating the 
@@ -1443,9 +1443,9 @@ class ImageViewer:
         """
         return self.bins, self.hist
 
-    def show_histogram(self, hist = False):
-        '''Use *out_fig* to hide/display the histogram, according to the *hist* parameter
-        '''
+    def show_histogram(self, hist=False):
+        """Use *out_fig* to hide/display the histogram, according to the *hist* parameter
+        """
         if hist:
             self.out_fig.layout.width = '45%'
             #             self.hist_container = widgets.Output()
@@ -1459,8 +1459,8 @@ class ImageViewer:
             self.out_fig.layout.width = '80%'
 
     def set_widgets(self, widgets=True):
-        '''Hide/display widget menu
-        '''
+        """Hide/display widget menu
+        """
         if widgets:
             self.widgets = True
         else:
@@ -1492,9 +1492,9 @@ class ImageViewer:
 #             ax.axes.yaxis.set_visible(axis)
 #             count += 1
             
-    def set_colorbar(self, colorbar = True):
-        '''Hide/display colorbars on images
-        '''
+    def set_colorbar(self, colorbar=True):
+        """Hide/display colorbars on images
+        """
         if colorbar:
             # Redefine attribute holding colorbars. Make sure we have an empty list to append our colorbars
             self.cb = []
@@ -1521,9 +1521,9 @@ class ImageViewer:
         plt.draw()
             
     def set_colormap(self, colormap='gray'):
-        '''Callback of *dropdown_cmap*, changes the colormap automatically. Can also
+        """Callback of *dropdown_cmap*, changes the colormap automatically. Can also
         be called programatically.
-        '''
+        """
         # If the user has called this function programatically, change cmap:
         self.dropdown_cmap.value = colormap
         # Iterate every AxesImage object in our attribute and set the colormap requested
@@ -1647,11 +1647,11 @@ class ImageViewer:
         return mean, std, min_value, max_value, shape, xlim, ylim, description
     
     def save(self, change):
-        '''Function to generate a NumPy Array out of the image currenctly in
+        """Function to generate a NumPy Array out of the image currenctly in
         display (including region of display, transforms applied, etc.), without
         modifying the original.
-        '''
-        if self.current_image != None:
+        """
+        if self.current_image is not None:
             viewer_screenshot = np.copy(self.data[self.current_image])
             viewer_screenshot = viewer_screenshot[int(self.ylim[0][1]):int(self.ylim[0][0]),
                                 int(self.xlim[0][0]):int(self.xlim[0][1])]
