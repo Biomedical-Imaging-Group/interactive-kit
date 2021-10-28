@@ -6,9 +6,15 @@
 Welcome to interactive-kit's documentation!
 ===========================================
 
+Package for interactive visualization in Jupyter Notebooks, with emphasis in image processing, signal processing and machine learning.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   
+   usage
+   contributing
+   imageviewer
 
 
 
@@ -19,7 +25,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
- .. automodule:: interactive_kit.imageviewer
-   :members:
-.. .. autoclass:: ImageViewer
-   :members:
+.. .. automodule:: interactive_kit.imageviewer
+.. .. autoclass:: interactive_kit.imageviewer.ImageViewer
