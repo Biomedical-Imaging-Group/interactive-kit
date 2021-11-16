@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="interactive-kit",
-    version="0.1.3",
+    version="0.1.4",
     author="Alejandro Noguerón",
     author_email="alex.noguerona@gmail.com",
     description="Interactive viewer for signal processing, image processing, and machine learning",
