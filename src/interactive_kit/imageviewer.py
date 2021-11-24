@@ -544,15 +544,20 @@ class ImageViewer():
         
         # Buttons to navigate through images. Only activated if the user requested single image display
         if self.current_image != None :
-            
-            # Button next image ('\U02190' for right arrow, not supported by python apparently)        
-            self.button_next = widgets.Button(description = 'Next', layout = widgets.Layout(width = '80px'))
-            self.button_next.on_click(self.next_button_callback)
-            # Button prev image ('\U02192' for left arrow)
-            self.button_prev = widgets.Button(description = 'Prev', layout = widgets.Layout(width = '80px'))
-            self.button_prev.on_click(self.prev_button_callback)
-            # Wrap both buttons in one Horizontal widget
-            self.next_prev_buttons = widgets.HBox([self.button_prev, self.button_next])
+            # If use_slider was not specified, default it to True if there are more than 5 input images
+            self.use_slider = kwargs.get('use_slider', True if self.number_images > 5 else False)
+            if self.use_slider:
+                self.change_img_slider = widgets.IntSlider(min=1, max=self.number_images, layout = widgets.Layout(width = '220px'))
+                self.change_img_slider.observe(self.change_img_slider_callback, names='value')
+            else:
+                # Button next image ('\U02190' for right arrow, not supported by python apparently)        
+                self.button_next = widgets.Button(description = 'Next', layout = widgets.Layout(width = '80px'))
+                self.button_next.on_click(self.next_button_callback)
+                # Button prev image ('\U02192' for left arrow)
+                self.button_prev = widgets.Button(description = 'Prev', layout = widgets.Layout(width = '80px'))
+                self.button_prev.on_click(self.prev_button_callback)
+                # Wrap both buttons in one Horizontal widget
+                self.next_prev_buttons = widgets.HBox([self.button_prev, self.button_next])
         
         ##################### Text
         # Get stats. Instead of connecting to a callback, it is updated continuously
@@ -627,9 +632,12 @@ class ImageViewer():
         # Declare 'base' widget list for main menu. Depending on other parameters, it will be modified
         widget_list = [self.b_c_text, self.slider_clim, self.button_hist, self.button_options, self.button_reset, self.stats_text]
         
-        # If more than one image, add next and previous buttons
+        # If more than one image, add next and previous buttons or slider
         if self.current_image != None and self.number_images > 1:
-            widget_list.insert(5, self.next_prev_buttons)
+            if not self.use_slider:
+                widget_list.insert(5, self.next_prev_buttons)
+            else:
+                widget_list.insert(5, self.change_img_slider)
             
         # If extra widgets are given, add extra widgets button
         if self.extra_widgets:
@@ -1003,6 +1011,14 @@ class ImageViewer():
         # Change image to one after the currently plotted
         self.change_image(1)
 
+    def change_img_slider_callback(self, value):
+        '''Callback of *Image* slider, to browse the images. 
+        
+        It is only active when there are more than 5 images, or is was specified by use_slider, and the display mode
+        is single image.
+        '''
+        self.change_image(value.new - value.old)
+        
     # Callback used when user declares an extra widget
     def x_w_callback(self, change):
         '''Callback of user defined transforms button, to apply transform(s) 
@@ -1305,15 +1321,16 @@ class ImageViewer():
             self.update_stats()
         
         # Manage disabling of buttons (Disable prev if it's the first fig, next if it's the last, else enable both)
-        if curr_img == self.number_images -1 :
-            self.button_next.disabled = True
-            self.button_prev.disabled = False
-        elif curr_img == 0:
-            self.button_prev.disabled = True
-            self.button_next.disabled = False
-        else:
-            self.button_next.disabled = False
-            self.button_prev.disabled = False
+        if not self.use_slider:
+            if curr_img == self.number_images -1 :
+                self.button_next.disabled = True
+                self.button_prev.disabled = False
+            elif curr_img == 0:
+                self.button_prev.disabled = True
+                self.button_next.disabled = False
+            else:
+                self.button_next.disabled = False
+                self.button_prev.disabled = False
         
 #         self.fig.tight_layout()
     
