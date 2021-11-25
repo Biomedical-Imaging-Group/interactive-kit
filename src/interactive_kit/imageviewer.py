@@ -91,6 +91,9 @@ class ImageViewer():
         If the mode is only one image on display keeps track of which image is
         currently on display. If all images on display, it is set to `None`
     
+    use_slider : bool
+        Decides if a slider is used instead of the Prec / Next buttons when in single image mode
+    
     axs : list 
         Contains the AxesSubplots (see Matplotlib documentation) of each image.
         If the mode of the `ImageViewer` is to visualize only one image at a
@@ -276,6 +279,9 @@ class ImageViewer():
             Specifies the title of every image. If not given, the name of the 
             variable will be used as title.
         
+        use_slider : bool
+            Specifies if a slider should be used instead of the Prev / Next buttons when in single image mode
+        
         widgets : boolean
             Display the widget menu. If not specified (or set to False),
             only the button *Show Wisgets* will be displayed.
@@ -309,7 +315,7 @@ class ImageViewer():
         # Now, we make a sanity check on the keyword arguments
         accepted_arguments = ['pixel_grid', 'subplots', 'axis', 'normalize', 'clip_range', 'fix_range', 'scale_range', 'title', 
                               'num_step', 'cmap', 'new_widgets', 'callbacks', 'clickable', 'line', 'subplots', 
-                              'hist', 'widgets', 'colorbar', 'joint_zoom', 'compare']
+                              'hist', 'widgets', 'colorbar', 'joint_zoom', 'compare', 'use_slider']
         # sort in place
         accepted_arguments.sort()
         if not all([arg in accepted_arguments for arg in list(kwargs.keys())]):
