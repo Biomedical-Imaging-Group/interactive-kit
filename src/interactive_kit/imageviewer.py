@@ -553,7 +553,7 @@ class ImageViewer():
             # If use_slider was not specified, default it to True if there are more than 5 input images
             self.use_slider = kwargs.get('use_slider', True if self.number_images > 5 else False)
             if self.use_slider:
-                self.change_img_slider = widgets.IntSlider(min=1, max=self.number_images, layout = widgets.Layout(width = '220px'))
+                self.change_img_slider = widgets.IntSlider(min=1, max=self.number_images, layout = widgets.Layout(width = '160px'), readout=False)
                 self.change_img_slider.observe(self.change_img_slider_callback, names='value')
             else:
                 # Button next image ('\U02190' for right arrow, not supported by python apparently)        
@@ -564,6 +564,9 @@ class ImageViewer():
                 self.button_prev.on_click(self.prev_button_callback)
                 # Wrap both buttons in one Horizontal widget
                 self.next_prev_buttons = widgets.HBox([self.button_prev, self.button_next])
+                
+            # HTML text to display the current image and total number of images
+            self.img_count_txt = widgets.HTML(value=f"1 / {self.number_images}")
         
         ##################### Text
         # Get stats. Instead of connecting to a callback, it is updated continuously
@@ -641,9 +644,9 @@ class ImageViewer():
         # If more than one image, add next and previous buttons or slider
         if self.current_image != None and self.number_images > 1:
             if not self.use_slider:
-                widget_list.insert(5, self.next_prev_buttons)
+                widget_list.insert(5, widgets.HBox([self.next_prev_buttons, self.img_count_txt]))
             else:
-                widget_list.insert(5, self.change_img_slider)
+                widget_list.insert(5, widgets.HBox([self.change_img_slider, self.img_count_txt]))
             
         # If extra widgets are given, add extra widgets button
         if self.extra_widgets:
@@ -1250,12 +1253,17 @@ class ImageViewer():
         '''
         # Restore self.im (attribute that holds AxesImage objects)
         self.im = []
+        # Initialize curr_img to the current image before change
+        curr_img = self.current_image
         # If image in display is to be changed (change = 1, -1, 2, ...), check that there is another image to go to. Otherwise, do nothing
         if self.current_image + change in range(self.number_images):
             # Update attribute self.current_image
             self.current_image += change
             
-            # Local variable
+            # Set the current image number in the text box
+            self.img_count_txt.value = f"{self.current_image + 1} / {self.number_images}"
+            
+            # Update curr_img
             curr_img = self.current_image
             
             # Keep track of wether the new and the previous image have the same shape 
