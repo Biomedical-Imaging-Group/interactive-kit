@@ -1358,8 +1358,8 @@ class ImageViewer():
                         xmax * (self.max[i][self.current_image] - self.min[i][self.current_image]) + self.min[i][self.current_image]]
             else:
                 data = [xmin * (self.max[i] - self.min[i]) +self.min[i], xmax * (self.max[i] - self.min[i]) +self.min[i]]
-
-            self.lines[i][0].set_xdata(data)
+            if self.lines[i] != None:
+                self.lines[i][0].set_xdata(data)
 #             else:
 #                 self.lines[i][0].set_xdata([xmin*self.max[self.current_image]+self.min[self.current_image]*(xmax - xmin), xmax*self.max[self.current_image]])
             count +=1
