@@ -1178,7 +1178,7 @@ class ImageViewer():
                     self.data[h][i] = np.copy(self.original[h][i])
                     # Call the function defined by the user on the current image
                     if multi_callback:
-                        self.data[h][i] = self.usr_defined_callbacks[i](self.data[h][i])
+                        self.data[h][i] = self.usr_defined_callbacks[h](self.data[h][i])
                     else:
                         if (not self.clickable ):
                             self.data[h][i] = self.usr_defined_callbacks[0](self.data[h][i])
