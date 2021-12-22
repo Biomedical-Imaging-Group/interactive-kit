@@ -91,6 +91,9 @@ class ImageViewer():
         If the mode is only one image on display keeps track of which image is
         currently on display. If all images on display, it is set to `None`
     
+    use_slider : bool
+        Decides if a slider is used instead of the Prec / Next buttons when in single image mode
+    
     axs : list 
         Contains the AxesSubplots (see Matplotlib documentation) of each image.
         If the mode of the `ImageViewer` is to visualize only one image at a
@@ -282,6 +285,9 @@ class ImageViewer():
             Specifies the title of every image. If not given, the name of the 
             variable will be used as title.
         
+        use_slider : bool
+            Specifies if a slider should be used instead of the Prev / Next buttons when in single image mode
+        
         widgets : boolean
             Display the widget menu. If not specified (or set to False),
             only the button *Show Wisgets* will be displayed.
@@ -329,7 +335,7 @@ class ImageViewer():
         # Now, we make a sanity check on the keyword arguments
         accepted_arguments = ['pixel_grid', 'subplots', 'axis', 'normalize', 'clip_range', 'fix_range', 'scale_range', 'title', 
                               'num_step', 'cmap', 'new_widgets', 'callbacks', 'clickable', 'line', 'subplots', 
-                              'hist', 'widgets', 'colorbar', 'joint_zoom', 'compare']
+                              'hist', 'widgets', 'colorbar', 'joint_zoom', 'compare', 'use_slider']
         # sort in place
         accepted_arguments.sort()
         if not all([arg in accepted_arguments for arg in list(kwargs.keys())]):
@@ -671,15 +677,24 @@ class ImageViewer():
         self.button_showw.on_click(self.showw_button_callback)
         
         # Buttons to navigate through images. Only activated if the user requested single image display
-        if self.current_image != None:
-            # Button next image ('\U02190' for right arrow, not supported by python apparently)        
-            self.button_next = widgets.Button(description = 'Next', layout = widgets.Layout(width = '80px'))
-            self.button_next.on_click(self.next_button_callback)
-            # Button prev image ('\U02192' for left arrow)
-            self.button_prev = widgets.Button(description = 'Prev', layout = widgets.Layout(width = '80px'))
-            self.button_prev.on_click(self.prev_button_callback)
-            # Wrap both buttons in one Horizontal widget
-            self.next_prev_buttons = widgets.HBox([self.button_prev, self.button_next])
+        if self.current_image != None :
+            # If use_slider was not specified, default it to True if there are more than 5 input images
+            self.use_slider = kwargs.get('use_slider', True if self.number_images > 5 else False)
+            if self.use_slider:
+                self.change_img_slider = widgets.IntSlider(min=1, max=self.number_images, layout = widgets.Layout(width = '160px'), readout=False)
+                self.change_img_slider.observe(self.change_img_slider_callback, names='value')
+            else:
+                # Button next image ('\U02190' for right arrow, not supported by python apparently)        
+                self.button_next = widgets.Button(description = 'Next', layout = widgets.Layout(width = '80px'))
+                self.button_next.on_click(self.next_button_callback)
+                # Button prev image ('\U02192' for left arrow)
+                self.button_prev = widgets.Button(description = 'Prev', layout = widgets.Layout(width = '80px'))
+                self.button_prev.on_click(self.prev_button_callback)
+                # Wrap both buttons in one Horizontal widget
+                self.next_prev_buttons = widgets.HBox([self.button_prev, self.button_next])
+                
+            # HTML text to display the current image and total number of images
+            self.img_count_txt = widgets.HTML(value=f"1 / {self.number_images}")
         
         ##################### Text
         # Get stats. Instead of connecting to a callback, it is updated continuously
@@ -754,9 +769,12 @@ class ImageViewer():
         # Declare 'base' widget list for main menu. Depending on other parameters, it will be modified
         widget_list = [self.b_c_text, self.slider_clim, self.button_hist, self.button_options, self.button_reset, self.stats_text]
         
-        # If more than one image, add next and previous buttons
+        # If more than one image, add next and previous buttons or slider
         if self.current_image != None and self.number_images > 1:
-            widget_list.insert(5, self.next_prev_buttons)
+            if not self.use_slider:
+                widget_list.insert(5, widgets.HBox([self.next_prev_buttons, self.img_count_txt]))
+            else:
+                widget_list.insert(5, widgets.HBox([self.change_img_slider, self.img_count_txt]))
             
         # If extra widgets are given, add extra widgets button
         if self.extra_widgets:
@@ -1149,6 +1167,14 @@ class ImageViewer():
         # Change image to one after the currently plotted
         self.change_image(1)
 
+    def change_img_slider_callback(self, value):
+        '''Callback of *Image* slider, to browse the images. 
+        
+        It is only active when there are more than 5 images, or is was specified by use_slider, and the display mode
+        is single image.
+        '''
+        self.change_image(value.new - value.old)
+        
     # Callback used when user declares an extra widget
     def x_w_callback(self, change):
         '''Callback of user defined transforms button, to apply transform(s) 
@@ -1401,12 +1427,17 @@ class ImageViewer():
         '''
         # Restore self.im (attribute that holds AxesImage objects)
         self.im = []
+        # Initialize curr_img to the current image before change
+        curr_img = self.current_image
         # If image in display is to be changed (change = 1, -1, 2, ...), check that there is another image to go to. Otherwise, do nothing
         if self.current_image + change in range(self.number_images):
             # Update attribute self.current_image
             self.current_image += change
             
-            # Local variable
+            # Set the current image number in the text box
+            self.img_count_txt.value = f"{self.current_image + 1} / {self.number_images}"
+            
+            # Update curr_img
             curr_img = self.current_image
             
             if self.multiple_lists:
@@ -1543,15 +1574,16 @@ class ImageViewer():
             self.update_stats()
         
         # Manage disabling of buttons (Disable prev if it's the first fig, next if it's the last, else enable both)
-        if curr_img == self.number_images -1 :
-            self.button_next.disabled = True
-            self.button_prev.disabled = False
-        elif curr_img == 0:
-            self.button_prev.disabled = True
-            self.button_next.disabled = False
-        else:
-            self.button_next.disabled = False
-            self.button_prev.disabled = False
+        if not self.use_slider:
+            if curr_img == self.number_images -1 :
+                self.button_next.disabled = True
+                self.button_prev.disabled = False
+            elif curr_img == 0:
+                self.button_prev.disabled = True
+                self.button_next.disabled = False
+            else:
+                self.button_next.disabled = False
+                self.button_prev.disabled = False
         
 #         self.fig.tight_layout()
     
