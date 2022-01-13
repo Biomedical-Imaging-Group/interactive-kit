@@ -62,6 +62,8 @@ The development of the viewer was supported by the [Digital Resources for Instru
 
 If you want to start using `interactive-kit` rightaway, without going through the process of installing Python and Jupyter, you can [click here](https://noto.epfl.ch/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2FBiomedical-Imaging-Group%2FIPLabImageViewer&urlpath=tree%2FIPLabImageViewer%2FIPLabViewer_Tutorial.ipynb&branch=master) and start using right away from [Noto](https://www.epfl.ch/education/educational-initiatives/cede/digitaltools/noto/), EPFL's Jupyter centralized platform.
 
+In addition, you could [go here](https://renkulab.io/projects/learn-renku/teaching-on-renku/interactive-kit) and click on the **Start** button to use it in an interactive session from [RenkuLab](https://renkulab.io/), an open source platfrom developed by the [Swiss Data Science Center](https://datascience.ch/) based at EPFL and ETHZ.
+
 ## Contributions
 
 We appreciate contributions, feedback and bug reports from the community:
