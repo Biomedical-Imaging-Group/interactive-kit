@@ -371,6 +371,7 @@ class ImageViewer():
         with self.out_fig:
             # Initialize figure and subplots inside just created widget
             self.fig, self.axs = plt.subplots(subplots[0], subplots[1], num = f'Image {fig_num} - SCIPER: {uid} - Date: ' + date_str)   
+            plt.show()
         # Set an appropriate size (in inches) for the figure. These are similar to matplotlib default sizes. Modify them to change image physical size. You can also set them constant, in which case, more images --> smaller images.
         if self.current_image != None and not self.multiple_lists:
             self.fig.set_size_inches([subplots[1]*4.7*1.3, subplots[0]*4.5*1.3])
@@ -819,7 +820,8 @@ class ImageViewer():
         self.out_hist = widgets.Output(layout = widgets.Layout(width = '100%'))   #(85% for V layout) 
         # Initialize histogram figure. The subplots shape is the same as in the images figure
         with self.out_hist:            
-            self.fig_hist, self.axs_hist = plt.subplots(subplots[0], subplots[1], num = f'Histogram {fig_num} - SCIPER: {uid}') 
+            self.fig_hist, self.axs_hist = plt.subplots(subplots[0], subplots[1], num = f'Histogram {fig_num} - SCIPER: {uid}')
+            plt.show()
 #         self.fig_hist.set_size_inches([subplots[1]*4.7*0.65, subplots[0]*4.5*0.72]) #(V layout: See self.fig)
         if self.current_image != None:
             self.fig_hist.set_size_inches([subplots[1]*4.7*0.5, subplots[0]*4.5*0.55])
